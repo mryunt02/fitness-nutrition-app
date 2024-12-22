@@ -1,3 +1,6 @@
+// Load environment variables from .env file
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -9,14 +12,18 @@ const mealRoutes = require('./routes/mealRoutes');
 const app = express();
 app.use(bodyParser.json());
 
-// MongoDB connection
-mongoose.connect(
-  'mongodb+srv://mrthresh58:<db_password>@cluster0.l5cmf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
-  {
+// MongoDB connection using environment variable
+mongoose
+  .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-  }
-);
+  })
+  .then(() => {
+    console.log('MongoDB connected successfully');
+  })
+  .catch((err) => {
+    console.error('MongoDB connection error:', err);
+  });
 
 // API routes
 app.use('/api/users', userRoutes);
