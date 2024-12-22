@@ -1,39 +1,26 @@
 import React, { useState } from 'react';
-import { Activity, Weight, Ruler, Target, Heart, User } from 'lucide-react';
+import {
+  FaUser,
+  FaWeight,
+  FaRuler,
+  FaTransgender,
+  FaHeartbeat,
+  FaBullseye,
+} from 'react-icons/fa';
 
 const Profile = () => {
   const [userData, setUserData] = useState({
-    name: '',
-    age: '',
-    weight: '',
-    height: '',
-    gender: '',
-    fitnessLevel: '',
-    healthCondition: [],
-    goal: [],
+    name: 'John Doe',
+    age: 30,
+    weight: 70,
+    height: 175,
+    gender: 'male',
+    fitnessLevel: 'intermediate',
+    healthCondition: 'None',
+    goal: 'Weight Loss',
   });
 
-  const healthConditions = [
-    'None',
-    'High Blood Pressure',
-    'Asthma',
-    'Diabetes',
-    'Joint Pain',
-    'Heart Condition',
-    'Back Pain',
-    'Other',
-  ];
-
-  const fitnessGoals = [
-    'Weight Loss',
-    'Muscle Gain',
-    'Improve Strength',
-    'Increase Flexibility',
-    'Better Endurance',
-    'General Fitness',
-    'Sports Performance',
-    'Rehabilitation',
-  ];
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,199 +30,149 @@ const Profile = () => {
     }));
   };
 
-  const handleMultiSelect = (e, field) => {
-    const value = Array.from(
-      e.target.selectedOptions,
-      (option) => option.value
-    );
-    setUserData((prevData) => ({
-      ...prevData,
-      [field]: value,
-    }));
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
+    setIsEditing(false);
     // Handle profile update
-    console.log('Profile data:', userData);
   };
 
   return (
-    <div className='max-w-3xl mx-auto'>
-      <div className='bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow-lg p-8'>
-        <div className='flex items-center gap-3 mb-8'>
-          <Activity className='w-8 h-8 text-blue-600' />
-          <h1 className='text-3xl font-bold text-gray-800'>Fitness Profile</h1>
-        </div>
-
-        <form onSubmit={handleSubmit} className='space-y-6'>
-          {/* Personal Information Section */}
-          <div className='bg-white p-6 rounded-lg shadow-sm'>
-            <h2 className='text-xl font-semibold mb-4 flex items-center gap-2'>
-              <User className='w-5 h-5 text-blue-600' />
-              Personal Information
-            </h2>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-              <div>
-                <label className='block text-sm font-medium text-gray-700'>
-                  Name
-                </label>
-                <input
-                  type='text'
-                  name='name'
-                  value={userData.name}
-                  onChange={handleChange}
-                  className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
-                  placeholder='Enter your name'
-                />
-              </div>
-              <div>
-                <label className='block text-sm font-medium text-gray-700'>
-                  Age
-                </label>
-                <input
-                  type='number'
-                  name='age'
-                  value={userData.age}
-                  onChange={handleChange}
-                  className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
-                  placeholder='Enter your age'
-                />
-              </div>
+    <div className='bg-gray-100 min-h-screen flex items-center justify-center'>
+      <div className='bg-white rounded-lg shadow-lg p-8 max-w-md w-full'>
+        <h1 className='text-3xl font-bold mb-6 text-center text-green-600'>
+          Profile Settings
+        </h1>
+        {isEditing ? (
+          <form onSubmit={handleSubmit} className='space-y-4'>
+            <div className='flex items-center'>
+              <FaUser className='mr-2 text-green-600' />
+              <label className='block text-sm font-medium text-gray-700'>
+                Name
+              </label>
             </div>
-          </div>
-
-          {/* Physical Metrics Section */}
-          <div className='bg-white p-6 rounded-lg shadow-sm'>
-            <h2 className='text-xl font-semibold mb-4 flex items-center gap-2'>
-              <Weight className='w-5 h-5 text-blue-600' />
-              Physical Metrics
-            </h2>
-            <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-              <div>
-                <label className='block text-sm font-medium text-gray-700'>
-                  Weight (kg)
-                </label>
-                <input
-                  type='number'
-                  name='weight'
-                  value={userData.weight}
-                  onChange={handleChange}
-                  className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
-                  placeholder='Enter weight'
-                />
-              </div>
-              <div>
-                <label className='block text-sm font-medium text-gray-700'>
-                  Height (cm)
-                </label>
-                <input
-                  type='number'
-                  name='height'
-                  value={userData.height}
-                  onChange={handleChange}
-                  className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
-                  placeholder='Enter height'
-                />
-              </div>
-              <div>
-                <label className='block text-sm font-medium text-gray-700'>
-                  Gender
-                </label>
-                <select
-                  name='gender'
-                  value={userData.gender}
-                  onChange={handleChange}
-                  className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
-                >
-                  <option value=''>Select Gender</option>
-                  <option value='male'>Male</option>
-                  <option value='female'>Female</option>
-                  <option value='other'>Other</option>
-                </select>
-              </div>
+            <input
+              type='text'
+              name='name'
+              value={userData.name}
+              onChange={handleChange}
+              className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2'
+            />
+            <div className='flex items-center'>
+              <FaWeight className='mr-2 text-green-600' />
+              <label className='block text-sm font-medium text-gray-700'>
+                Weight (kg)
+              </label>
             </div>
-          </div>
-
-          {/* Fitness Information Section */}
-          <div className='bg-white p-6 rounded-lg shadow-sm'>
-            <h2 className='text-xl font-semibold mb-4 flex items-center gap-2'>
-              <Activity className='w-5 h-5 text-blue-600' />
-              Fitness Information
-            </h2>
-            <div className='space-y-4'>
-              <div>
-                <label className='block text-sm font-medium text-gray-700'>
-                  Fitness Level
-                </label>
-                <select
-                  name='fitnessLevel'
-                  value={userData.fitnessLevel}
-                  onChange={handleChange}
-                  className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
-                >
-                  <option value=''>Select Fitness Level</option>
-                  <option value='beginner'>Beginner (New to exercise)</option>
-                  <option value='intermediate'>
-                    Intermediate (Regular exercise)
-                  </option>
-                  <option value='advanced'>
-                    Advanced (Experienced athlete)
-                  </option>
-                </select>
-              </div>
-              <div>
-                <label className='block text-sm font-medium text-gray-700'>
-                  Health Conditions
-                </label>
-                <select
-                  multiple
-                  name='healthCondition'
-                  value={userData.healthCondition}
-                  onChange={(e) => handleMultiSelect(e, 'healthCondition')}
-                  className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-32'
-                >
-                  {healthConditions.map((condition) => (
-                    <option key={condition} value={condition}>
-                      {condition}
-                    </option>
-                  ))}
-                </select>
-                <p className='mt-1 text-sm text-gray-500'>
-                  Hold Ctrl/Cmd to select multiple
-                </p>
-              </div>
-              <div>
-                <label className='block text-sm font-medium text-gray-700'>
-                  Fitness Goals
-                </label>
-                <select
-                  multiple
-                  name='goal'
-                  value={userData.goal}
-                  onChange={(e) => handleMultiSelect(e, 'goal')}
-                  className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-32'
-                >
-                  {fitnessGoals.map((goal) => (
-                    <option key={goal} value={goal}>
-                      {goal}
-                    </option>
-                  ))}
-                </select>
-                <p className='mt-1 text-sm text-gray-500'>
-                  Hold Ctrl/Cmd to select multiple
-                </p>
-              </div>
+            <input
+              type='number'
+              name='weight'
+              value={userData.weight}
+              onChange={handleChange}
+              className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2'
+            />
+            <div className='flex items-center'>
+              <FaRuler className='mr-2 text-green-600' />
+              <label className='block text-sm font-medium text-gray-700'>
+                Height (cm)
+              </label>
             </div>
+            <input
+              type='number'
+              name='height'
+              value={userData.height}
+              onChange={handleChange}
+              className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2'
+            />
+            <div className='flex items-center'>
+              <FaTransgender className='mr-2 text-green-600' />
+              <label className='block text-sm font-medium text-gray-700'>
+                Gender
+              </label>
+            </div>
+            <select
+              name='gender'
+              value={userData.gender}
+              onChange={handleChange}
+              className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2'
+            >
+              <option value=''>Select Gender</option>
+              <option value='male'>Male</option>
+              <option value='female'>Female</option>
+              <option value='other'>Other</option>
+            </select>
+            <div className='flex items-center'>
+              <FaHeartbeat className='mr-2 text-green-600' />
+              <label className='block text-sm font-medium text-gray-700'>
+                Health Condition
+              </label>
+            </div>
+            <input
+              type='text'
+              name='healthCondition'
+              value={userData.healthCondition}
+              onChange={handleChange}
+              className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2'
+            />
+            <div className='flex items-center'>
+              <FaBullseye className='mr-2 text-green-600' />
+              <label className='block text-sm font-medium text-gray-700'>
+                Goal
+              </label>
+            </div>
+            <input
+              type='text'
+              name='goal'
+              value={userData.goal}
+              onChange={handleChange}
+              className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2'
+            />
+            <button
+              type='submit'
+              className='w-full bg-green-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-600 transition duration-200'
+            >
+              Save
+            </button>
+          </form>
+        ) : (
+          <div>
+            <div className='mb-4'>
+              <h2 className='text-lg font-medium'>Personal Information</h2>
+              <p>
+                <strong>Name:</strong> {userData.name}
+              </p>
+              <p>
+                <strong>Age:</strong> {userData.age}
+              </p>
+              <p>
+                <strong>Weight:</strong> {userData.weight} kg
+              </p>
+              <p>
+                <strong>Height:</strong> {userData.height} cm
+              </p>
+              <p>
+                <strong>Gender:</strong> {userData.gender}
+              </p>
+            </div>
+            <div className='mb-4'>
+              <h2 className='text-lg font-medium'>Fitness Information</h2>
+              <p>
+                <strong>Fitness Level:</strong> {userData.fitnessLevel}
+              </p>
+              <p>
+                <strong>Health Condition:</strong> {userData.healthCondition}
+              </p>
+              <p>
+                <strong>Goal:</strong> {userData.goal}
+              </p>
+            </div>
+            <button
+              onClick={() => setIsEditing(true)}
+              className='w-full bg-green-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-600 transition duration-200'
+            >
+              Change Info
+            </button>
           </div>
-
-          <button
-            type='submit'
-            className='w-full bg-blue-600 text-white py-3 px-4 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200'
-          >
-            Save Profile
-          </button>
-        </form>
+        )}
       </div>
     </div>
   );
