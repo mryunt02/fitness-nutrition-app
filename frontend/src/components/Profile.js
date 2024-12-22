@@ -135,34 +135,58 @@ const Profile = () => {
           </form>
         ) : (
           <div>
-            <div className='mb-4'>
-              <h2 className='text-lg font-medium'>Personal Information</h2>
-              <p>
-                <strong>Name:</strong> {userData.name}
+            <div className='mb-4 p-4 bg-green-50 rounded-lg shadow-md'>
+              <h2 className='text-2xl font-bold mb-4 text-green-600'>
+                Personal Information
+              </h2>
+              <p className='flex items-center text-lg mb-2'>
+                <FaUser className='mr-2 text-green-600' />
+                <strong className='text-gray-800'>Name:</strong>{' '}
+                <span className='text-gray-700'>{userData.name}</span>
               </p>
-              <p>
-                <strong>Age:</strong> {userData.age}
+              <p className='flex items-center text-lg mb-2'>
+                <FaBullseye className='mr-2 text-green-600' />
+                <strong className='text-gray-800'>Age:</strong>{' '}
+                <span className='text-gray-700'>{userData.age}</span>
               </p>
-              <p>
-                <strong>Weight:</strong> {userData.weight} kg
+              <p className='flex items-center text-lg mb-2'>
+                <FaWeight className='mr-2 text-green-600' />
+                <strong className='text-gray-800'>Weight:</strong>{' '}
+                <span className='text-gray-700'>{userData.weight} kg</span>
               </p>
-              <p>
-                <strong>Height:</strong> {userData.height} cm
+              <p className='flex items-center text-lg mb-2'>
+                <FaRuler className='mr-2 text-green-600' />
+                <strong className='text-gray-800'>Height:</strong>{' '}
+                <span className='text-gray-700'>{userData.height} cm</span>
               </p>
-              <p>
-                <strong>Gender:</strong> {userData.gender}
+              <p className='flex items-center text-lg mb-2'>
+                <FaTransgender className='mr-2 text-green-600' />
+                <strong className='text-gray-800'>Gender:</strong>{' '}
+                <span className='text-gray-700'>{userData.gender}</span>
               </p>
             </div>
-            <div className='mb-4'>
-              <h2 className='text-lg font-medium'>Fitness Information</h2>
-              <p>
-                <strong>Fitness Level:</strong> {userData.fitnessLevel}
+            <div className='mb-4 p-4 bg-green-50 rounded-lg shadow-md'>
+              <h2 className='text-2xl font-bold mb-4 text-green-600'>
+                Fitness Information
+              </h2>
+              <p className='flex items-center text-lg mb-2'>
+                <FaHeartbeat className='mr-2 text-green-600' />
+                <strong className='text-gray-800'>Fitness Level:</strong>{' '}
+                <span className='text-gray-700'>{userData.fitnessLevel}</span>
               </p>
-              <p>
-                <strong>Health Condition:</strong> {userData.healthCondition}
+              <p className='flex items-center text-lg mb-2'>
+                <FaHeartbeat className='mr-2 text-green-600' />
+                <strong className='text-gray-800'>
+                  Health Condition:
+                </strong>{' '}
+                <span className='text-gray-700'>
+                  {userData.healthCondition}
+                </span>
               </p>
-              <p>
-                <strong>Goal:</strong> {userData.goal}
+              <p className='flex items-center text-lg mb-2'>
+                <FaBullseye className='mr-2 text-green-600' />
+                <strong className='text-gray-800'>Goal:</strong>{' '}
+                <span className='text-gray-700'>{userData.goal}</span>
               </p>
             </div>
             <button
