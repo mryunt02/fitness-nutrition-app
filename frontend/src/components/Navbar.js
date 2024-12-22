@@ -20,7 +20,7 @@ const Navbar = () => {
           </div>
           <div className={`hidden md:flex space-x-4`}>
             <NavLink
-              to='/'
+              to='/dashboard'
               icon={<House size={20} />}
               label='Dashboard'
               className='text-lg'
