@@ -204,16 +204,29 @@ const WorkoutPage = () => {
           {Object.entries(groupedWorkouts).map(([date, workoutGroup]) => (
             <div
               key={date}
-              className='border p-4 rounded-lg mb-4 bg-white shadow'
+              className='border border-gray-300 p-6 rounded-lg mb-6 bg-white shadow-lg hover:shadow-xl transition-shadow duration-300'
             >
-              <h3 className='text-lg font-semibold text-gray-800'>{date}</h3>
+              <h3 className='text-2xl font-semibold text-gray-800 mb-4'>
+                {date}
+              </h3>
               {workoutGroup.map((workout) => (
-                <div key={workout.id} className='mb-4'>
+                <div key={workout.id} className='mb-6'>
                   {workout.exercises.map((exercise, index) => (
-                    <p key={index} className='text-gray-700'>
-                      {exercise.name}: {exercise.reps} reps, {exercise.sets}{' '}
-                      sets, {exercise.duration} min
-                    </p>
+                    <div
+                      key={index}
+                      className='flex items-center space-x-3 mb-3 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300'
+                    >
+                      <FaDumbbell className='text-green-600 text-lg' />
+                      <div>
+                        <p className='font-medium text-gray-800'>
+                          {exercise.name}
+                        </p>
+                        <p className='text-gray-600'>
+                          {exercise.reps} reps, {exercise.sets} sets,{' '}
+                          {exercise.duration} min
+                        </p>
+                      </div>
+                    </div>
                   ))}
                 </div>
               ))}

@@ -75,8 +75,10 @@ const Dashboard = () => {
   };
 
   return (
-    <div className='bg-gray-100 min-h-screen p-6'>
-      <h1 className='text-3xl font-bold text-center mb-6'>Dashboard</h1>
+    <div className='bg-gray-100 min-h-screen'>
+      <h1 className='text-3xl font-bold text-center mb-6 text-green-600'>
+        Dashboard
+      </h1>
 
       {/* Time Frame Selection */}
       <div className='flex justify-center mb-6'>
