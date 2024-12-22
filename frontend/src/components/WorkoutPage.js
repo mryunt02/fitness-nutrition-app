@@ -56,8 +56,17 @@ const WorkoutPage = () => {
     }
   };
 
+  // Group workouts by date
+  const groupedWorkouts = workouts.reduce((acc, workout) => {
+    if (!acc[workout.date]) {
+      acc[workout.date] = [];
+    }
+    acc[workout.date].push(workout);
+    return acc;
+  }, {});
+
   return (
-    <div className='bg-gray-100 min-h-screen p-6'>
+    <div className='bg-gray-100 min-h-screen'>
       <div className='bg-white rounded-lg shadow-lg p-6'>
         <h1 className='text-3xl font-bold mb-6 text-green-600'>Workouts</h1>
         <form onSubmit={handleAddWorkout} className='space-y-4'>
@@ -192,19 +201,21 @@ const WorkoutPage = () => {
         </form>
         <div className='mt-6'>
           <h2 className='text-2xl font-bold text-green-600'>Workout History</h2>
-          {workouts.map((workout) => (
+          {Object.entries(groupedWorkouts).map(([date, workoutGroup]) => (
             <div
-              key={workout.id}
+              key={date}
               className='border p-4 rounded-lg mb-4 bg-white shadow'
             >
-              <h3 className='text-lg font-semibold text-gray-800'>
-                {workout.date}
-              </h3>
-              {workout.exercises.map((exercise, index) => (
-                <p key={index} className='text-gray-700'>
-                  {exercise.name}: {exercise.reps} reps, {exercise.sets} sets,{' '}
-                  {exercise.duration} min
-                </p>
+              <h3 className='text-lg font-semibold text-gray-800'>{date}</h3>
+              {workoutGroup.map((workout) => (
+                <div key={workout.id} className='mb-4'>
+                  {workout.exercises.map((exercise, index) => (
+                    <p key={index} className='text-gray-700'>
+                      {exercise.name}: {exercise.reps} reps, {exercise.sets}{' '}
+                      sets, {exercise.duration} min
+                    </p>
+                  ))}
+                </div>
               ))}
             </div>
           ))}
