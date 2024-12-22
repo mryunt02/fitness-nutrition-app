@@ -61,7 +61,7 @@ const WorkoutPage = () => {
       <div className='bg-white rounded-lg shadow-lg p-6'>
         <h1 className='text-3xl font-bold mb-6 text-green-600'>Workouts</h1>
         <form onSubmit={handleAddWorkout} className='space-y-4'>
-          <div className='flex items-center mb-4'>
+          <div className='mb-4'>
             <div className='flex'>
               <FaCalendarAlt className='mr-2 text-green-600' />
               <label className='block text-sm font-medium text-gray-700'>

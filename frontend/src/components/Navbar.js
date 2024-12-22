@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { House, User, Dumbbell, Beef, Loader } from 'lucide-react';
+import { House, User, Dumbbell, Beef, Loader, Menu, X } from 'lucide-react';
 import NavLink from './NavLink';
 
 const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <nav className='bg-white shadow-lg'>
       <div className='max-w-6xl mx-auto px-4'>
@@ -11,23 +13,93 @@ const Navbar = () => {
           <Link to='/' className='font-bold text-xl'>
             FitTrack
           </Link>
-          <div className='flex space-x-4'>
-            <NavLink to='/' icon={<House size={20} />} label='Dashboard' />
-            <NavLink to='/profile' icon={<User size={20} />} label='Profile' />
+          <div className='md:hidden'>
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+          <div className={`hidden md:flex space-x-4`}>
+            <NavLink
+              to='/'
+              icon={<House size={20} />}
+              label='Dashboard'
+              className='text-lg'
+            />
+            <NavLink
+              to='/profile'
+              icon={<User size={20} />}
+              label='Profile'
+              className='text-lg'
+            />
             <NavLink
               to='/workouts'
               icon={<Dumbbell size={20} />}
               label='Workouts'
+              className='text-lg'
             />
-            <NavLink to='/meals' icon={<Beef size={20} />} label='Meals' />
+            <NavLink
+              to='/meals'
+              icon={<Beef size={20} />}
+              label='Meals'
+              className='text-lg'
+            />
             <NavLink
               to='/progress'
               icon={<Loader size={20} />}
               label='Progress'
+              className='text-lg'
             />
           </div>
         </div>
       </div>
+
+      {isMenuOpen && (
+        <div
+          className='fixed inset-0 bg-gray-800 bg-opacity-90 z-10'
+          onClick={() => setIsMenuOpen(false)}
+        >
+          <div className='flex flex-col items-center justify-center h-full bg-white'>
+            <button
+              className='absolute top-4 right-4'
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <X size={24} />
+            </button>
+            <div className='flex flex-col space-y-4'>
+              <NavLink
+                to='/dashboard'
+                icon={<House size={20} />}
+                label='Dashboard'
+                className='text-xl'
+              />
+              <NavLink
+                to='/profile'
+                icon={<User size={20} />}
+                label='Profile'
+                className='text-xl'
+              />
+              <NavLink
+                to='/workouts'
+                icon={<Dumbbell size={20} />}
+                label='Workouts'
+                className='text-xl'
+              />
+              <NavLink
+                to='/meals'
+                icon={<Beef size={20} />}
+                label='Meals'
+                className='text-xl'
+              />
+              <NavLink
+                to='/progress'
+                icon={<Loader size={20} />}
+                label='Progress'
+                className='text-xl'
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

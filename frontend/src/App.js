@@ -4,6 +4,8 @@ import Navbar from './components/Navbar';
 import Profile from './components/Profile';
 import WorkoutPage from './components/WorkoutPage';
 import MealPage from './components/MealPage';
+import Home from './pages/Home';
+import Dashboard from './pages/Dashboard';
 // import ProgressPage from './ProgressPage'; // Assuming you have a ProgressPage component
 // import DashboardPage from './DashboardPage'; // Assuming you have a DashboardPage component
 
@@ -14,7 +16,8 @@ const App = () => {
         <Navbar />
         <main className='max-w-6xl mx-auto p-4'>
           <Routes>
-            <Route path='/' element={<div />} />
+            <Route path='/' element={<Home />} />
+            <Route path='/dashboard' element={<Dashboard />} />
             <Route path='/profile' element={<Profile />} />
             <Route path='/workouts' element={<WorkoutPage />} />
             <Route path='/meals' element={<MealPage />} />
