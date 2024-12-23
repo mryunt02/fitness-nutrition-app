@@ -5,7 +5,9 @@ import {
   FaClock,
   FaListOl,
   FaTh,
-} from 'react-icons/fa'; // Import icons
+  FaPlus,
+  FaTrash,
+} from 'react-icons/fa';
 
 const WorkoutPage = () => {
   const [workouts, setWorkouts] = useState([]);
@@ -19,12 +21,10 @@ const WorkoutPage = () => {
     const newErrors = {};
     const today = new Date().toISOString().split('T')[0];
 
-    // Date validation
     if (newWorkout.date < today) {
       newErrors.date = 'Date cannot be in the past.';
     }
 
-    // Validate exercises
     newWorkout.exercises.forEach((exercise, index) => {
       if (!exercise.name) {
         newErrors[`name_${index}`] = 'Exercise name is required.';
@@ -56,7 +56,24 @@ const WorkoutPage = () => {
     }
   };
 
-  // Group workouts by date
+  const addExercise = () => {
+    setNewWorkout({
+      ...newWorkout,
+      exercises: [
+        ...newWorkout.exercises,
+        { name: '', reps: '', sets: '', duration: '' },
+      ],
+    });
+  };
+
+  const removeExercise = (index) => {
+    const updatedExercises = newWorkout.exercises.filter((_, i) => i !== index);
+    setNewWorkout({
+      ...newWorkout,
+      exercises: updatedExercises,
+    });
+  };
+
   const groupedWorkouts = workouts.reduce((acc, workout) => {
     if (!acc[workout.date]) {
       acc[workout.date] = [];
@@ -65,175 +82,215 @@ const WorkoutPage = () => {
     return acc;
   }, {});
 
+  const Input = ({ label, icon: Icon, type, value, onChange, error }) => (
+    <div className='mb-4'>
+      <label className='flex items-center text-sm font-medium text-gray-700 mb-2'>
+        <Icon className='mr-2 text-green-600' />
+        {label}
+      </label>
+      <input
+        type={type}
+        value={value}
+        onChange={onChange}
+        className='w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all'
+      />
+      {error && <p className='mt-1 text-red-500 text-sm'>{error}</p>}
+    </div>
+  );
+
   return (
-    <div className=''>
-      <div className='bg-white rounded-lg shadow-lg p-6'>
-        <h1 className='text-3xl font-bold mb-6 text-green-600 text-center'>
-          Workouts
-        </h1>
-        <form onSubmit={handleAddWorkout} className='space-y-4'>
-          <div className='mb-4'>
-            <div className='flex'>
-              <FaCalendarAlt className='mr-2 text-green-600' />
-              <label className='block text-sm font-medium text-gray-700'>
-                Date
-              </label>
-            </div>
-            <input
-              type='date'
-              value={newWorkout.date}
-              onChange={(e) =>
-                setNewWorkout({ ...newWorkout, date: e.target.value })
-              }
-              className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2'
-            />
-            {errors.date && (
-              <p className='text-red-500 text-sm'>{errors.date}</p>
-            )}
+    <div className='min-h-screen bg-gray-50 py-8'>
+      <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8'>
+        <div className='flex justify-between items-center mb-8'>
+          <div>
+            <h1 className='text-4xl font-bold text-gray-900'>
+              Workout Tracker
+            </h1>
+            <p className='mt-2 text-gray-600'>
+              Log and track your exercise routine
+            </p>
           </div>
-          {newWorkout.exercises.map((exercise, index) => (
-            <div key={index} className='border p-4 rounded-lg mb-4 bg-green-50'>
-              <h2 className='text-lg font-bold text-green-600 mb-2'>
-                Exercise {index + 1}
-              </h2>
-              <div className='mb-4'>
-                <label className='flex items-center text-sm font-medium text-gray-700'>
-                  <FaDumbbell className='mr-2 text-green-600' />
-                  Name
-                </label>
-                <input
-                  type='text'
-                  value={exercise.name}
-                  onChange={(e) => {
-                    const updatedExercises = [...newWorkout.exercises];
-                    updatedExercises[index].name = e.target.value;
-                    setNewWorkout({
-                      ...newWorkout,
-                      exercises: updatedExercises,
-                    });
-                  }}
-                  className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2'
-                />
-                {errors[`name_${index}`] && (
-                  <p className='text-red-500 text-sm'>
-                    {errors[`name_${index}`]}
-                  </p>
-                )}
+        </div>
+
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
+          {/* Workout Form */}
+          <div className='bg-white rounded-xl shadow-lg p-6'>
+            <h2 className='text-xl font-semibold text-gray-900 mb-6'>
+              Add New Workout
+            </h2>
+            <form onSubmit={handleAddWorkout}>
+              <Input
+                label='Date'
+                icon={FaCalendarAlt}
+                type='date'
+                value={newWorkout.date}
+                onChange={(e) =>
+                  setNewWorkout({ ...newWorkout, date: e.target.value })
+                }
+                error={errors.date}
+              />
+
+              {newWorkout.exercises.map((exercise, index) => (
+                <div
+                  key={index}
+                  className='mb-6 p-4 bg-gray-50 rounded-xl border border-gray-100'
+                >
+                  <div className='flex justify-between items-center mb-4'>
+                    <h3 className='text-lg font-medium text-gray-900'>
+                      Exercise {index + 1}
+                    </h3>
+                    {index > 0 && (
+                      <button
+                        type='button'
+                        onClick={() => removeExercise(index)}
+                        className='text-red-500 hover:text-red-600 transition-colors'
+                      >
+                        <FaTrash />
+                      </button>
+                    )}
+                  </div>
+
+                  <Input
+                    label='Exercise Name'
+                    icon={FaDumbbell}
+                    type='text'
+                    value={exercise.name}
+                    onChange={(e) => {
+                      const updatedExercises = [...newWorkout.exercises];
+                      updatedExercises[index].name = e.target.value;
+                      setNewWorkout({
+                        ...newWorkout,
+                        exercises: updatedExercises,
+                      });
+                    }}
+                    error={errors[`name_${index}`]}
+                  />
+
+                  <div className='grid grid-cols-3 gap-4'>
+                    <Input
+                      label='Reps'
+                      icon={FaListOl}
+                      type='number'
+                      value={exercise.reps}
+                      onChange={(e) => {
+                        const updatedExercises = [...newWorkout.exercises];
+                        updatedExercises[index].reps = e.target.value;
+                        setNewWorkout({
+                          ...newWorkout,
+                          exercises: updatedExercises,
+                        });
+                      }}
+                      error={errors[`reps_${index}`]}
+                    />
+
+                    <Input
+                      label='Sets'
+                      icon={FaTh}
+                      type='number'
+                      value={exercise.sets}
+                      onChange={(e) => {
+                        const updatedExercises = [...newWorkout.exercises];
+                        updatedExercises[index].sets = e.target.value;
+                        setNewWorkout({
+                          ...newWorkout,
+                          exercises: updatedExercises,
+                        });
+                      }}
+                      error={errors[`sets_${index}`]}
+                    />
+
+                    <Input
+                      label='Duration'
+                      icon={FaClock}
+                      type='number'
+                      value={exercise.duration}
+                      onChange={(e) => {
+                        const updatedExercises = [...newWorkout.exercises];
+                        updatedExercises[index].duration = e.target.value;
+                        setNewWorkout({
+                          ...newWorkout,
+                          exercises: updatedExercises,
+                        });
+                      }}
+                      error={errors[`duration_${index}`]}
+                    />
+                  </div>
+                </div>
+              ))}
+
+              <div className='flex gap-4 mt-6'>
+                <button
+                  type='button'
+                  onClick={addExercise}
+                  className='flex items-center justify-center px-4 py-2 border border-green-500 text-green-500 rounded-lg hover:bg-green-50 transition-colors'
+                >
+                  <FaPlus className='mr-2' />
+                  Add Exercise
+                </button>
+                <button
+                  type='submit'
+                  className='flex-1 bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors'
+                >
+                  Save Workout
+                </button>
               </div>
-              <div className='mb-4'>
-                <label className='flex items-center text-sm font-medium text-gray-700'>
-                  <FaListOl className='mr-2 text-green-600' />
-                  Reps
-                </label>
-                <input
-                  type='number'
-                  value={exercise.reps}
-                  onChange={(e) => {
-                    const updatedExercises = [...newWorkout.exercises];
-                    updatedExercises[index].reps = e.target.value;
-                    setNewWorkout({
-                      ...newWorkout,
-                      exercises: updatedExercises,
-                    });
-                  }}
-                  className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2'
-                />
-                {errors[`reps_${index}`] && (
-                  <p className='text-red-500 text-sm'>
-                    {errors[`reps_${index}`]}
-                  </p>
-                )}
-              </div>
-              <div className='mb-4'>
-                <label className='flex items-center text-sm font-medium text-gray-700'>
-                  <FaTh className='mr-2 text-green-600' />
-                  Sets
-                </label>
-                <input
-                  type='number'
-                  value={exercise.sets}
-                  onChange={(e) => {
-                    const updatedExercises = [...newWorkout.exercises];
-                    updatedExercises[index].sets = e.target.value;
-                    setNewWorkout({
-                      ...newWorkout,
-                      exercises: updatedExercises,
-                    });
-                  }}
-                  className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2'
-                />
-                {errors[`sets_${index}`] && (
-                  <p className='text-red-500 text-sm'>
-                    {errors[`sets_${index}`]}
-                  </p>
-                )}
-              </div>
-              <div className='mb-4'>
-                <label className='flex items-center text-sm font-medium text-gray-700'>
-                  <FaClock className='mr-2 text-green-600' />
-                  Duration (min)
-                </label>
-                <input
-                  type='number'
-                  value={exercise.duration}
-                  onChange={(e) => {
-                    const updatedExercises = [...newWorkout.exercises];
-                    updatedExercises[index].duration = e.target.value;
-                    setNewWorkout({
-                      ...newWorkout,
-                      exercises: updatedExercises,
-                    });
-                  }}
-                  className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2'
-                />
-                {errors[`duration_${index}`] && (
-                  <p className='text-red-500 text-sm'>
-                    {errors[`duration_${index}`]}
-                  </p>
-                )}
-              </div>
-            </div>
-          ))}
-          <button
-            type='submit'
-            className='w-full bg-green-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-600 transition duration-200'
-          >
-            Add Workout
-          </button>
-        </form>
-        <div className='mt-6'>
-          <h2 className='text-2xl font-bold text-green-600'>Workout History</h2>
-          {Object.entries(groupedWorkouts).map(([date, workoutGroup]) => (
-            <div
-              key={date}
-              className='border border-gray-300 p-6 rounded-lg mb-6 bg-white shadow-lg hover:shadow-xl transition-shadow duration-300'
-            >
-              <h3 className='text-2xl font-semibold text-gray-800 mb-4'>
-                {date}
-              </h3>
-              {workoutGroup.map((workout) => (
-                <div key={workout.id} className='mb-6'>
-                  {workout.exercises.map((exercise, index) => (
-                    <div
-                      key={index}
-                      className='flex items-center space-x-3 mb-3 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300'
-                    >
-                      <FaDumbbell className='text-green-600 text-lg' />
-                      <div>
-                        <p className='font-medium text-gray-800'>
-                          {exercise.name}
-                        </p>
-                        <p className='text-gray-600'>
-                          {exercise.reps} reps, {exercise.sets} sets,{' '}
-                          {exercise.duration} min
-                        </p>
-                      </div>
+            </form>
+          </div>
+
+          {/* Workout History */}
+          <div>
+            <h2 className='text-xl font-semibold text-gray-900 mb-6'>
+              Workout History
+            </h2>
+            <div className='space-y-6'>
+              {Object.entries(groupedWorkouts).map(([date, workoutGroup]) => (
+                <div
+                  key={date}
+                  className='bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow'
+                >
+                  <div className='flex items-center mb-4'>
+                    <FaCalendarAlt className='text-green-600 mr-2' />
+                    <h3 className='text-lg font-semibold text-gray-900'>
+                      {date}
+                    </h3>
+                  </div>
+
+                  {workoutGroup.map((workout) => (
+                    <div key={workout.id} className='space-y-4'>
+                      {workout.exercises.map((exercise, index) => (
+                        <div
+                          key={index}
+                          className='p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors'
+                        >
+                          <div className='flex items-start'>
+                            <FaDumbbell className='text-green-600 mt-1 mr-3' />
+                            <div>
+                              <p className='font-medium text-gray-900'>
+                                {exercise.name}
+                              </p>
+                              <div className='mt-1 text-sm text-gray-600'>
+                                <span className='inline-flex items-center mr-4'>
+                                  <FaListOl className='mr-1' /> {exercise.reps}{' '}
+                                  reps
+                                </span>
+                                <span className='inline-flex items-center mr-4'>
+                                  <FaTh className='mr-1' /> {exercise.sets} sets
+                                </span>
+                                <span className='inline-flex items-center'>
+                                  <FaClock className='mr-1' />{' '}
+                                  {exercise.duration} min
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   ))}
                 </div>
               ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </div>

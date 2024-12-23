@@ -1,38 +1,92 @@
 import React from 'react';
-import FeatureCard from '../components/FeatureCard';
 import { features } from '../Feature';
 
 const Home = () => {
   return (
-    <div className='p-6'>
-      <header className='text-center mb-12'>
-        <h1 className='text-4xl font-bold text-green-600'>
-          Welcome to FitTrack
-        </h1>
-        <p className='mt-4 text-lg text-gray-700'>
-          Your ultimate fitness companion for tracking workouts, meals, and
-          progress.
-        </p>
-        <button className='mt-6 bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition duration-200'>
-          Get Started
-        </button>
-      </header>
+    <div className='min-h-screen bg-gradient-to-b from-white to-green-50'>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+        {/* Hero Section */}
+        <header className='py-16 md:py-24 text-center'>
+          <div className='max-w-3xl mx-auto'>
+            <h1 className='text-5xl md:text-6xl font-bold text-gray-900 mb-6'>
+              Welcome to <span className='text-green-600'>FitTrack</span>
+            </h1>
+            <p className='text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed'>
+              Your ultimate fitness companion for tracking workouts, meals, and
+              progress with precision and ease.
+            </p>
+            <div className='space-x-4'>
+              <button className='inline-flex items-center px-8 py-3 rounded-full text-lg font-semibold bg-green-600 text-white hover:bg-green-700 transform hover:scale-105 transition-all shadow-lg hover:shadow-xl'>
+                Get Started
+              </button>
+              <button className='inline-flex items-center px-8 py-3 rounded-full text-lg font-semibold text-green-600 bg-white border-2 border-green-600 hover:bg-green-50 transform hover:scale-105 transition-all'>
+                Learn More
+              </button>
+            </div>
+          </div>
+        </header>
 
-      <section className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-        {features.map((feature) => (
-          <FeatureCard
-            key={feature.title}
-            icon={feature.icon}
-            title={feature.title}
-            description={feature.description}
-          />
-        ))}
-      </section>
-      <footer className='mt-12 text-center'>
-        <p className='text-gray-600'>
-          Join our community and start your fitness journey today!
-        </p>
-      </footer>
+        {/* Features Section */}
+        <section className='py-16 md:py-24'>
+          <div className='text-center mb-16'>
+            <h2 className='text-3xl md:text-4xl font-bold text-gray-900 mb-4'>
+              Why Choose FitTrack?
+            </h2>
+            <p className='text-xl text-gray-600 max-w-2xl mx-auto'>
+              Discover how our features can help you achieve your fitness goals
+            </p>
+          </div>
+
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
+            {features.map((feature) => (
+              <div
+                key={feature.title}
+                className='bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow transform hover:-translate-y-1 duration-300'
+              >
+                <div className='flex items-center justify-center w-16 h-16 bg-green-100 rounded-2xl mb-6'>
+                  {feature.icon}
+                </div>
+                <h3 className='text-xl font-bold text-gray-900 mb-4'>
+                  {feature.title}
+                </h3>
+                <p className='text-gray-600 leading-relaxed'>
+                  {feature.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className='py-16 md:py-24'>
+          <div className='bg-green-600 rounded-3xl p-8 md:p-16 text-center text-white'>
+            <h2 className='text-3xl md:text-4xl font-bold mb-6'>
+              Ready to Transform Your Fitness Journey?
+            </h2>
+            <p className='text-xl md:text-2xl mb-8 opacity-90'>
+              Join thousands of users who have already achieved their fitness
+              goals with FitTrack
+            </p>
+            <button className='px-8 py-3 text-lg font-semibold bg-white text-green-600 rounded-full hover:bg-green-50 transform hover:scale-105 transition-all'>
+              Start Free Trial
+            </button>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className='py-12 text-center border-t border-gray-200'>
+          <div className='max-w-2xl mx-auto'>
+            <p className='text-gray-600 mb-4'>
+              Join our community and start your fitness journey today!
+            </p>
+            <div className='flex justify-center space-x-6'>
+              <p className='text-gray-400 hover:text-gray-600'>Terms</p>
+              <p className='text-gray-400 hover:text-gray-600'>Privacy</p>
+              <p className='text-gray-400 hover:text-gray-600'>Contact</p>
+            </div>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 };

@@ -16,9 +16,9 @@ import {
 } from 'recharts';
 
 const Dashboard = () => {
-  const [timeFrame, setTimeFrame] = useState('weekly'); // State to manage the selected time frame
+  const [timeFrame, setTimeFrame] = useState('weekly');
 
-  // Sample data for meals, workouts, and progress
+  // Sample data remains the same as in original code
   const mealData = {
     weekly: [
       { name: 'Week 1', calories: 1200 },
@@ -79,7 +79,6 @@ const Dashboard = () => {
     ],
   };
 
-  // New data for nutrition overview
   const nutritionData = {
     weekly: [
       { name: 'Protein', value: 150 },
@@ -98,7 +97,6 @@ const Dashboard = () => {
     ],
   };
 
-  // New data for workout frequency
   const workoutFrequencyData = {
     weekly: [
       { name: 'Week 1', workouts: 3 },
@@ -113,107 +111,113 @@ const Dashboard = () => {
     ],
   };
 
+  const chartColors = {
+    calories: '#10B981',
+    workouts: '#6366F1',
+    weight: '#F59E0B',
+    nutrition: ['#EF4444', '#10B981', '#6366F1'],
+  };
+
   return (
-    <div className='p-6'>
-      <h1 className='text-3xl font-bold text-center mb-6 text-green-600'>
-        Dashboard
-      </h1>
-
-      {/* Time Frame Selection */}
-      <div className='flex justify-center mb-6'>
-        <button
-          className={`mx-2 py-2 px-4 rounded-md ${
-            timeFrame === 'daily'
-              ? 'bg-green-500 text-white'
-              : 'bg-white text-green-500 border border-green-500'
-          }`}
-          onClick={() => setTimeFrame('daily')}
-        >
-          Daily
-        </button>
-        <button
-          className={`mx-2 py-2 px-4 rounded-md ${
-            timeFrame === 'weekly'
-              ? 'bg-green-500 text-white'
-              : 'bg-white text-green-500 border border-green-500'
-          }`}
-          onClick={() => setTimeFrame('weekly')}
-        >
-          Weekly
-        </button>
-        <button
-          className={`mx-2 py-2 px-4 rounded-md ${
-            timeFrame === 'monthly'
-              ? 'bg-green-500 text-white'
-              : 'bg-white text-green-500 border border-green-500'
-          }`}
-          onClick={() => setTimeFrame('monthly')}
-        >
-          Monthly
-        </button>
-      </div>
-
-      <div className=' flex flex-col gap-6'>
-        {/* Meals Chart */}
-        <div className='bg-white p-4 rounded-lg shadow-md'>
-          <h2 className='text-xl font-semibold mb-4'>
-            {timeFrame.charAt(0).toUpperCase() + timeFrame.slice(1)} Caloric
-            Intake
-          </h2>
-          <ResponsiveContainer width='100%' height={300}>
-            <LineChart data={mealData[timeFrame]}>
-              <CartesianGrid strokeDasharray='3 3' />
-              <XAxis dataKey='name' />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type='monotone' dataKey='calories' stroke='#82ca9d' />
-            </LineChart>
-          </ResponsiveContainer>
+    <div className='min-h-screen bg-gray-50'>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+        <div className='text-center mb-8'>
+          <h1 className='text-4xl font-bold text-gray-900 mb-2'>
+            Fitness Dashboard
+          </h1>
+          <p className='text-gray-600'>
+            Track your progress and stay motivated
+          </p>
         </div>
 
-        {/* Workouts Chart */}
-        <div className='bg-white p-4 rounded-lg shadow-md'>
-          <h2 className='text-xl font-semibold mb-4'>
-            {timeFrame.charAt(0).toUpperCase() + timeFrame.slice(1)} Workouts
-          </h2>
-          <ResponsiveContainer width='100%' height={300}>
-            <LineChart data={workoutData[timeFrame]}>
-              <CartesianGrid strokeDasharray='3 3' />
-              <XAxis dataKey='name' />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type='monotone' dataKey='workouts' stroke='#8884d8' />
-            </LineChart>
-          </ResponsiveContainer>
+        <div className='flex justify-center mb-8 gap-2'>
+          {['daily', 'weekly', 'monthly'].map((frame) => (
+            <button
+              key={frame}
+              className={`px-6 py-2 rounded-full font-medium transition-all ${
+                timeFrame === frame
+                  ? 'bg-green-500 text-white shadow-lg'
+                  : 'bg-white text-gray-600 hover:bg-green-50 border border-gray-200'
+              }`}
+              onClick={() => setTimeFrame(frame)}
+            >
+              {frame.charAt(0).toUpperCase() + frame.slice(1)}
+            </button>
+          ))}
         </div>
 
-        {/* Progress Chart */}
-        <div className='bg-white p-4 rounded-lg shadow-md'>
-          <h2 className='text-xl font-semibold mb-4'>
-            {timeFrame.charAt(0).toUpperCase() + timeFrame.slice(1)} Weight
-            Progress
-          </h2>
-          <ResponsiveContainer width='100%' height={300}>
-            <LineChart data={progressData[timeFrame]}>
-              <CartesianGrid strokeDasharray='3 3' />
-              <XAxis dataKey='name' />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type='monotone' dataKey='weight' stroke='#ff7300' />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6'>
+          <div className='bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow'>
+            <div className='flex items-center justify-between mb-6'>
+              <h2 className='text-xl font-semibold text-gray-800'>
+                Caloric Intake
+              </h2>
+              <span className='text-sm text-gray-500'>{timeFrame}</span>
+            </div>
+            <ResponsiveContainer width='100%' height={300}>
+              <LineChart data={mealData[timeFrame]}>
+                <CartesianGrid strokeDasharray='3 3' stroke='#f0f0f0' />
+                <XAxis dataKey='name' stroke='#6B7280' />
+                <YAxis stroke='#6B7280' />
+                <Tooltip
+                  contentStyle={{
+                    background: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                  }}
+                />
+                <Legend />
+                <Line
+                  type='monotone'
+                  dataKey='calories'
+                  stroke={chartColors.calories}
+                  strokeWidth={2}
+                  dot={{ strokeWidth: 2 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
 
-        <div className='flex gap-4'>
-          {/* Nutrition Overview Pie Chart */}
-          <div className='bg-white p-4 rounded-lg shadow-md w-1/2'>
-            <h2 className='text-xl font-semibold mb-4'>
-              {timeFrame.charAt(0).toUpperCase() + timeFrame.slice(1)} Nutrition
-              Overview
-            </h2>
+          <div className='bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow'>
+            <div className='flex items-center justify-between mb-6'>
+              <h2 className='text-xl font-semibold text-gray-800'>
+                Weight Progress
+              </h2>
+              <span className='text-sm text-gray-500'>{timeFrame}</span>
+            </div>
+            <ResponsiveContainer width='100%' height={300}>
+              <LineChart data={progressData[timeFrame]}>
+                <CartesianGrid strokeDasharray='3 3' stroke='#f0f0f0' />
+                <XAxis dataKey='name' stroke='#6B7280' />
+                <YAxis stroke='#6B7280' />
+                <Tooltip
+                  contentStyle={{
+                    background: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                  }}
+                />
+                <Legend />
+                <Line
+                  type='monotone'
+                  dataKey='weight'
+                  stroke={chartColors.weight}
+                  strokeWidth={2}
+                  dot={{ strokeWidth: 2 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className='bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow'>
+            <div className='flex items-center justify-between mb-6'>
+              <h2 className='text-xl font-semibold text-gray-800'>
+                Nutrition Overview
+              </h2>
+              <span className='text-sm text-gray-500'>{timeFrame}</span>
+            </div>
             <ResponsiveContainer width='100%' height={300}>
               <PieChart>
                 <Pie
@@ -222,36 +226,56 @@ const Dashboard = () => {
                   nameKey='name'
                   cx='50%'
                   cy='50%'
-                  outerRadius={80}
+                  outerRadius={100}
+                  innerRadius={60}
                   fill='#8884d8'
                   label
+                  labelLine={false}
                 >
                   {nutritionData[timeFrame].map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
-                      fill={['#ff0000', '#00ff00', '#0000ff'][index % 3]}
+                      fill={chartColors.nutrition[index % 3]}
                     />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip
+                  contentStyle={{
+                    background: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                  }}
+                />
               </PieChart>
             </ResponsiveContainer>
           </div>
 
-          {/* Workout Frequency Bar Chart */}
-          <div className='bg-white p-4 rounded-lg shadow-md w-1/2'>
-            <h2 className='text-xl font-semibold mb-4'>
-              {timeFrame.charAt(0).toUpperCase() + timeFrame.slice(1)} Workout
-              Frequency
-            </h2>
+          <div className='bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow'>
+            <div className='flex items-center justify-between mb-6'>
+              <h2 className='text-xl font-semibold text-gray-800'>
+                Workout Frequency
+              </h2>
+              <span className='text-sm text-gray-500'>{timeFrame}</span>
+            </div>
             <ResponsiveContainer width='100%' height={300}>
               <BarChart data={workoutFrequencyData[timeFrame]}>
-                <CartesianGrid strokeDasharray='3 3' />
-                <XAxis dataKey='name' />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey='workouts' fill='#82ca9d' />
+                <CartesianGrid strokeDasharray='3 3' stroke='#f0f0f0' />
+                <XAxis dataKey='name' stroke='#6B7280' />
+                <YAxis stroke='#6B7280' />
+                <Tooltip
+                  contentStyle={{
+                    background: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                  }}
+                />
+                <Bar
+                  dataKey='workouts'
+                  fill={chartColors.workouts}
+                  radius={[4, 4, 0, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
