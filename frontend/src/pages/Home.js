@@ -12,7 +12,7 @@ import { features } from '../Feature';
 
 const Home = () => {
   return (
-    <div className='bg-gray-100 min-h-screen p-6'>
+    <div className='p-6'>
       <header className='text-center mb-12'>
         <h1 className='text-4xl font-bold text-green-600'>
           Welcome to FitTrack
