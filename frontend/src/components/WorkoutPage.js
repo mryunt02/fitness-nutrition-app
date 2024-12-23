@@ -68,7 +68,9 @@ const WorkoutPage = () => {
   return (
     <div className='bg-gray-100 min-h-screen'>
       <div className='bg-white rounded-lg shadow-lg p-6'>
-        <h1 className='text-3xl font-bold mb-6 text-green-600'>Workouts</h1>
+        <h1 className='text-3xl font-bold mb-6 text-green-600 text-center'>
+          Workouts
+        </h1>
         <form onSubmit={handleAddWorkout} className='space-y-4'>
           <div className='mb-4'>
             <div className='flex'>

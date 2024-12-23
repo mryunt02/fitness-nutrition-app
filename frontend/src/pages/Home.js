@@ -7,6 +7,7 @@ import {
   FaRegHeart,
   FaClipboardList,
 } from 'react-icons/fa'; // Import icons
+import FeatureCard from '../components/FeatureCard';
 
 const Home = () => {
   return (
@@ -25,50 +26,37 @@ const Home = () => {
       </header>
 
       <section className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-        <div className='bg-white p-6 rounded-lg shadow-md text-center transition-transform transform hover:scale-105'>
-          <FaDumbbell className='text-green-600 text-4xl mb-4' />
-          <h2 className='text-xl font-semibold'>Track Your Workouts</h2>
-          <p className='text-gray-600'>
-            Log your workouts and monitor your progress over time.
-          </p>
-        </div>
-        <div className='bg-white p-6 rounded-lg shadow-md text-center transition-transform transform hover:scale-105'>
-          <FaAppleAlt className='text-green-600 text-4xl mb-4' />
-          <h2 className='text-xl font-semibold'>Meal Planning</h2>
-          <p className='text-gray-600'>
-            Plan your meals and maintain a balanced diet effortlessly.
-          </p>
-        </div>
-        <div className='bg-white p-6 rounded-lg shadow-md text-center transition-transform transform hover:scale-105'>
-          <FaChartLine className='text-green-600 text-4xl mb-4' />
-          <h2 className='text-xl font-semibold'>Monitor Your Progress</h2>
-          <p className='text-gray-600'>
-            Keep track of your fitness journey and achieve your goals.
-          </p>
-        </div>
-        <div className='bg-white p-6 rounded-lg shadow-md text-center transition-transform transform hover:scale-105'>
-          <FaUserFriends className='text-green-600 text-4xl mb-4' />
-          <h2 className='text-xl font-semibold'>Join a Community</h2>
-          <p className='text-gray-600'>
-            Connect with friends and share your fitness journey.
-          </p>
-        </div>
-        <div className='bg-white p-6 rounded-lg shadow-md text-center transition-transform transform hover:scale-105'>
-          <FaRegHeart className='text-green-600 text-4xl mb-4' />
-          <h2 className='text-xl font-semibold'>Health Insights</h2>
-          <p className='text-gray-600'>
-            Get personalized health insights based on your data.
-          </p>
-        </div>
-        <div className='bg-white p-6 rounded-lg shadow-md text-center transition-transform transform hover:scale-105'>
-          <FaClipboardList className='text-green-600 text-4xl mb-4' />
-          <h2 className='text-xl font-semibold'>Workout Plans</h2>
-          <p className='text-gray-600'>
-            Access tailored workout plans to meet your fitness goals.
-          </p>
-        </div>
+        <FeatureCard
+          icon={<FaDumbbell />}
+          title='Track Your Workouts'
+          description='Log your workouts and monitor your progress over time.'
+        />
+        <FeatureCard
+          icon={<FaAppleAlt />}
+          title='Meal Planning'
+          description='Plan your meals and maintain a balanced diet effortlessly.'
+        />
+        <FeatureCard
+          icon={<FaChartLine />}
+          title='Monitor Your Progress'
+          description='Keep track of your fitness journey and achieve your goals.'
+        />
+        <FeatureCard
+          icon={<FaUserFriends />}
+          title='Join a Community'
+          description='Connect with friends and share your fitness journey.'
+        />
+        <FeatureCard
+          icon={<FaRegHeart />}
+          title='Health Insights'
+          description='Get personalized health insights based on your data.'
+        />
+        <FeatureCard
+          icon={<FaClipboardList />}
+          title='Workout Plans'
+          description='Access tailored workout plans to meet your fitness goals.'
+        />
       </section>
-
       <footer className='mt-12 text-center'>
         <p className='text-gray-600'>
           Join our community and start your fitness journey today!
