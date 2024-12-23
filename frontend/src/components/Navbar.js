@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { House, User, Dumbbell, Beef, Loader, Menu, X } from 'lucide-react';
+import {
+  House,
+  User,
+  Dumbbell,
+  Beef,
+  Loader,
+  Menu,
+  X,
+  Brain,
+} from 'lucide-react';
 import NavLink from './NavLink';
 
 const Navbar = () => {
@@ -49,6 +58,12 @@ const Navbar = () => {
               label='Progress'
               className='text-lg'
             />
+            <NavLink
+              to='/ai-assistant'
+              icon={<Brain size={20} />}
+              label='AI Assistant'
+              className='text-lg'
+            />
           </div>
         </div>
       </div>
@@ -95,6 +110,12 @@ const Navbar = () => {
                 icon={<Loader size={20} />}
                 label='Progress'
                 className='text-xl'
+              />
+              <NavLink
+                to='/ai-assistant'
+                icon={<Brain size={20} />}
+                label='AI Assistant'
+                className='text-lg'
               />
             </div>
           </div>
