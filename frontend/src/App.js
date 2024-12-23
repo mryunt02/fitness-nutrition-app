@@ -2,10 +2,12 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Profile from './components/Profile';
-import WorkoutPage from './components/WorkoutPage';
+import WorkoutPage from './pages/WorkoutPage';
 import MealPage from './components/MealPage';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
+import ProgressPage from './pages/ProgressPage';
+import AiAssistant from './pages/AiAssistant';
 // import ProgressPage from './ProgressPage'; // Assuming you have a ProgressPage component
 // import DashboardPage from './DashboardPage'; // Assuming you have a DashboardPage component
 
@@ -21,7 +23,8 @@ const App = () => {
             <Route path='/profile' element={<Profile />} />
             <Route path='/workouts' element={<WorkoutPage />} />
             <Route path='/meals' element={<MealPage />} />
-            <Route path='/progress' element={<div />} />
+            <Route path='/progress' element={<ProgressPage />} />
+            <Route path='/ai-assistant' element={<AiAssistant />} />
           </Routes>
         </main>
       </div>
