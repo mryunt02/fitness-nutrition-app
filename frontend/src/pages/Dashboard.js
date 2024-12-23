@@ -8,6 +8,11 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
 } from 'recharts';
 
 const Dashboard = () => {
@@ -74,11 +79,43 @@ const Dashboard = () => {
     ],
   };
 
+  // New data for nutrition overview
+  const nutritionData = {
+    weekly: [
+      { name: 'Protein', value: 150 },
+      { name: 'Carbs', value: 200 },
+      { name: 'Fats', value: 50 },
+    ],
+    daily: [
+      { name: 'Protein', value: 30 },
+      { name: 'Carbs', value: 50 },
+      { name: 'Fats', value: 10 },
+    ],
+    monthly: [
+      { name: 'Protein', value: 600 },
+      { name: 'Carbs', value: 800 },
+      { name: 'Fats', value: 200 },
+    ],
+  };
+
+  // New data for workout frequency
+  const workoutFrequencyData = {
+    weekly: [
+      { name: 'Week 1', workouts: 3 },
+      { name: 'Week 2', workouts: 5 },
+      { name: 'Week 3', workouts: 4 },
+      { name: 'Week 4', workouts: 6 },
+    ],
+    monthly: [
+      { name: 'Month 1', workouts: 10 },
+      { name: 'Month 2', workouts: 15 },
+      { name: 'Month 3', workouts: 12 },
+    ],
+  };
+
   return (
-    <div className='bg-gray-100 min-h-screen'>
-      <h1 className='text-3xl font-bold text-center mb-6 text-green-600'>
-        Dashboard
-      </h1>
+    <div className='p-6'>
+      <h1 className='text-3xl font-bold text-center mb-6'>Dashboard</h1>
 
       {/* Time Frame Selection */}
       <div className='flex justify-center mb-6'>
@@ -114,7 +151,7 @@ const Dashboard = () => {
         </button>
       </div>
 
-      <div className='flex flex-col gap-6'>
+      <div className=' flex flex-col gap-6'>
         {/* Meals Chart */}
         <div className='bg-white p-4 rounded-lg shadow-md'>
           <h2 className='text-xl font-semibold mb-4'>
@@ -166,6 +203,56 @@ const Dashboard = () => {
               <Line type='monotone' dataKey='weight' stroke='#ff7300' />
             </LineChart>
           </ResponsiveContainer>
+        </div>
+
+        <div className='flex gap-4'>
+          {/* Nutrition Overview Pie Chart */}
+          <div className='bg-white p-4 rounded-lg shadow-md w-1/2'>
+            <h2 className='text-xl font-semibold mb-4'>
+              {timeFrame.charAt(0).toUpperCase() + timeFrame.slice(1)} Nutrition
+              Overview
+            </h2>
+            <ResponsiveContainer width='100%' height={300}>
+              <PieChart>
+                <Pie
+                  data={nutritionData[timeFrame]}
+                  dataKey='value'
+                  nameKey='name'
+                  cx='50%'
+                  cy='50%'
+                  outerRadius={80}
+                  fill='#8884d8'
+                  label
+                >
+                  {nutritionData[timeFrame].map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={['#ff0000', '#00ff00', '#0000ff'][index % 3]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Workout Frequency Bar Chart */}
+          <div className='bg-white p-4 rounded-lg shadow-md w-1/2'>
+            <h2 className='text-xl font-semibold mb-4'>
+              {timeFrame.charAt(0).toUpperCase() + timeFrame.slice(1)} Workout
+              Frequency
+            </h2>
+            <ResponsiveContainer width='100%' height={300}>
+              <BarChart data={workoutFrequencyData[timeFrame]}>
+                <CartesianGrid strokeDasharray='3 3' />
+                <XAxis dataKey='name' />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey='workouts' fill='#82ca9d' />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
     </div>

@@ -1,12 +1,4 @@
 import React from 'react';
-import {
-  FaDumbbell,
-  FaAppleAlt,
-  FaChartLine,
-  FaUserFriends,
-  FaRegHeart,
-  FaClipboardList,
-} from 'react-icons/fa'; // Import icons
 import FeatureCard from '../components/FeatureCard';
 import { features } from '../Feature';
 

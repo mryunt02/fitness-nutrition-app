@@ -66,7 +66,7 @@ const WorkoutPage = () => {
   }, {});
 
   return (
-    <div className='bg-gray-100 min-h-screen'>
+    <div className=''>
       <div className='bg-white rounded-lg shadow-lg p-6'>
         <h1 className='text-3xl font-bold mb-6 text-green-600 text-center'>
           Workouts

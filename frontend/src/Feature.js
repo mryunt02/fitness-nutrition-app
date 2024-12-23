@@ -4,10 +4,10 @@ import {
   FaClipboardList,
   FaRunning,
   FaWeight,
-  FaCalendarAlt,
   FaAppleAlt,
   FaDumbbell,
   FaChartLine,
+  FaCalendarAlt,
 } from 'react-icons/fa';
 
 const features = [
@@ -42,9 +42,10 @@ const features = [
     description: 'Get personalized health insights based on your data.',
   },
   {
-    icon: <FaClipboardList />,
-    title: 'Workout Plans',
-    description: 'Access tailored workout plans to meet your fitness goals.',
+    icon: <FaCalendarAlt />,
+    title: 'Workout Scheduler',
+    description:
+      'Schedule your workouts and stay consistent with your routine.',
   },
   {
     icon: <FaRunning />,
