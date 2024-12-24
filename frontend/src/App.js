@@ -1,3 +1,4 @@
+// filepath: /Users/bugrahanyunt/Developer/fitness-nutrition-app/frontend/src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
@@ -8,8 +9,8 @@ import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import ProgressPage from './pages/ProgressPage';
 import AiAssistant from './pages/AiAssistant';
-// import ProgressPage from './ProgressPage'; // Assuming you have a ProgressPage component
-// import DashboardPage from './DashboardPage'; // Assuming you have a DashboardPage component
+import Login from './pages/Login';
+import Signup from './pages/Signup';
 
 const App = () => {
   return (
@@ -25,6 +26,8 @@ const App = () => {
             <Route path='/meals' element={<MealPage />} />
             <Route path='/progress' element={<ProgressPage />} />
             <Route path='/ai-assistant' element={<AiAssistant />} />
+            <Route path='/login' element={<Login />} />
+            <Route path='/signup' element={<Signup />} />
           </Routes>
         </main>
       </div>

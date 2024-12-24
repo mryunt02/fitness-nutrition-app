@@ -3,12 +3,14 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const userRoutes = require('./routes/userRoutes');
 const workoutRoutes = require('./routes/workoutRoutes');
 const mealRoutes = require('./routes/mealRoutes');
 
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 
 // MongoDB connection using environment variable
