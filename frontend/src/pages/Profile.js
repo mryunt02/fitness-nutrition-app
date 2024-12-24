@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   FaUser,
   FaWeight,
@@ -8,18 +8,11 @@ import {
   FaBullseye,
 } from 'react-icons/fa';
 import { StatCard } from '../components/StatCard';
+import { AuthContext } from '../App';
 
 const Profile = () => {
-  const [userData, setUserData] = useState({
-    name: 'John Doe',
-    age: 30,
-    weight: 70,
-    height: 175,
-    gender: 'male',
-    fitnessLevel: 'intermediate',
-    healthCondition: 'None',
-    goal: 'Weight Loss',
-  });
+  const { userData, setUserData } = useContext(AuthContext);
+  console.log('231213', userData);
 
   const [isEditing, setIsEditing] = useState(false);
 

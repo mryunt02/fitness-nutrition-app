@@ -1,23 +1,27 @@
 // filepath: /Users/bugrahanyunt/Developer/fitness-nutrition-app/frontend/src/pages/Login.js
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaUser, FaLock } from 'react-icons/fa';
+import { AuthContext } from '../App';
+import axiosInstance from '../axiosInstance';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { setUserData } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/users/login', {
+      const response = await axiosInstance.post('/api/users/login', {
         email,
         password,
       });
       localStorage.setItem('token', response.data.token);
+      setUserData({ isLoggedIn: true });
       navigate('/dashboard');
     } catch (err) {
       setError('Invalid email or password');

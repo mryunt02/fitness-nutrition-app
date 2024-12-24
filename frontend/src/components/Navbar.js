@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   House,
@@ -9,11 +9,14 @@ import {
   Menu,
   X,
   Brain,
+  LogIn,
 } from 'lucide-react';
 import NavLink from './NavLink';
+import { AuthContext } from '../App';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { userData } = useContext(AuthContext);
 
   return (
     <nav className='bg-white shadow-lg'>
@@ -28,42 +31,40 @@ const Navbar = () => {
             </button>
           </div>
           <div className={`hidden md:flex space-x-4`}>
-            <NavLink
-              to='/dashboard'
-              icon={<House size={20} />}
-              label='Dashboard'
-              className='text-lg'
-            />
-            <NavLink
-              to='/profile'
-              icon={<User size={20} />}
-              label='Profile'
-              className='text-lg'
-            />
-            <NavLink
-              to='/workouts'
-              icon={<Dumbbell size={20} />}
-              label='Workouts'
-              className='text-lg'
-            />
-            <NavLink
-              to='/meals'
-              icon={<Beef size={20} />}
-              label='Meals'
-              className='text-lg'
-            />
-            <NavLink
-              to='/progress'
-              icon={<Loader size={20} />}
-              label='Progress'
-              className='text-lg'
-            />
-            <NavLink
-              to='/ai-assistant'
-              icon={<Brain size={20} />}
-              label='AI Assistant'
-              className='text-lg'
-            />
+            {userData.isLoggedIn ? (
+              <>
+                <NavLink
+                  to='/dashboard'
+                  icon={<House size={20} />}
+                  label='Dashboard'
+                />
+                <NavLink
+                  to='/profile'
+                  icon={<User size={20} />}
+                  label='Profile'
+                />
+                <NavLink
+                  to='/workouts'
+                  icon={<Dumbbell size={20} />}
+                  label='Workouts'
+                />
+                <NavLink to='/meals' icon={<Beef size={20} />} label='Meals' />
+                <NavLink
+                  to='/progress'
+                  icon={<Loader size={20} />}
+                  label='Progress'
+                />
+                <NavLink
+                  to='/ai-assistant'
+                  icon={<Brain size={20} />}
+                  label='AI Assistant'
+                />
+              </>
+            ) : (
+              <>
+                <NavLink to='/login' icon={<LogIn size={20} />} label='Login' />
+              </>
+            )}
           </div>
         </div>
       </div>
