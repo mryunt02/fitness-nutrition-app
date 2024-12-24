@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import {
   House,
@@ -10,11 +10,31 @@ import {
   X,
   Brain,
   LogIn,
+  LogOut,
 } from 'lucide-react';
 import NavLink from './NavLink';
+import { AuthContext } from '../App';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { userData, setUserData } = useContext(AuthContext);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setUserData((prevData) => ({
+      ...prevData,
+      isLoggedIn: false,
+    }));
+  };
+
+  useEffect(() => {
+    if (localStorage.getItem('token')) {
+      setUserData((prevData) => ({
+        ...prevData,
+        isLoggedIn: true,
+      }));
+    }
+  }, [userData.isLoggedIn, setUserData]);
 
   return (
     <nav className='bg-white shadow-lg'>
@@ -29,7 +49,7 @@ const Navbar = () => {
             </button>
           </div>
           <div className={`hidden md:flex space-x-4`}>
-            {localStorage.getItem('token') ? (
+            {userData.isLoggedIn ? (
               <>
                 <NavLink
                   to='/dashboard'
@@ -56,6 +76,12 @@ const Navbar = () => {
                   to='/ai-assistant'
                   icon={<Brain size={20} />}
                   label='AI Assistant'
+                />
+                <NavLink
+                  to='/login'
+                  icon={<LogOut size={20} />}
+                  label='Logout'
+                  onClick={handleLogout}
                 />
               </>
             ) : (

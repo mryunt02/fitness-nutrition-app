@@ -12,7 +12,6 @@ import { AuthContext } from '../App';
 
 const Profile = () => {
   const { userData, setUserData } = useContext(AuthContext);
-  console.log('231213', userData);
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -26,7 +25,6 @@ const Profile = () => {
 
   return (
     <div className='min-h-screen bg-gray-50 py-8'>
-      ß
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='mb-8'>
           <h1 className='text-4xl font-bold text-gray-900'>Profile</h1>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   FaCalendarAlt,
   FaDumbbell,
@@ -9,6 +9,7 @@ import {
   FaTrash,
 } from 'react-icons/fa';
 import { Input } from '../components/Input';
+import axiosInstance from '../axiosInstance';
 
 const WorkoutPage = () => {
   const [workouts, setWorkouts] = useState([]);
@@ -17,6 +18,26 @@ const WorkoutPage = () => {
     exercises: [{ name: '', reps: '', sets: '', duration: '' }],
   });
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+
+    const fetchWorkouts = async () => {
+      try {
+        const response = await axiosInstance.get(`/api/workouts/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setWorkouts(response.data);
+      } catch (error) {
+        console.error('Error fetching workouts:', error);
+      }
+    };
+
+    fetchWorkouts();
+  }, []);
 
   const validateInputs = () => {
     const newErrors = {};
