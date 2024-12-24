@@ -38,7 +38,6 @@ const WorkoutPage = () => {
 
     fetchWorkouts();
   }, []);
-  console.log(workouts);
 
   const validateInputs = () => {
     const newErrors = {};
@@ -67,15 +66,33 @@ const WorkoutPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleAddWorkout = (e) => {
+  const handleAddWorkout = async (e) => {
     e.preventDefault();
     if (validateInputs()) {
-      setWorkouts([...workouts, { ...newWorkout, id: Date.now() }]);
-      setNewWorkout({
-        date: new Date().toISOString().split('T')[0],
-        exercises: [{ name: '', reps: '', sets: '', duration: '' }],
-      });
-      setErrors({});
+      try {
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId');
+        const response = await axiosInstance.post(
+          '/api/workouts',
+          {
+            ...newWorkout,
+            userId,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setWorkouts([...workouts, response.data]);
+        setNewWorkout({
+          date: new Date().toISOString().split('T')[0],
+          exercises: [{ name: '', reps: '', sets: '', duration: '' }],
+        });
+        setErrors({});
+      } catch (error) {
+        console.error('Error adding workout:', error);
+      }
     }
   };
 
