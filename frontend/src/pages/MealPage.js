@@ -1,26 +1,29 @@
 import React, { useState } from 'react';
 import { FaCalendarAlt, FaUtensils, FaPlus, FaTrash } from 'react-icons/fa';
+import { Input } from '../components/Input';
 
 const MealPage = () => {
   const [meals, setMeals] = useState([]);
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const [mealType, setMealType] = useState('');
-  const [foods, setFoods] = useState([{ name: '', calories: '' }]);
+  const [newMeal, setNewMeal] = useState({
+    date: new Date().toISOString().split('T')[0],
+    mealType: '',
+    foods: [{ name: '', calories: '' }],
+  });
   const [errors, setErrors] = useState({});
 
   const validateInputs = () => {
     const newErrors = {};
     const today = new Date().toISOString().split('T')[0];
 
-    if (date < today) {
+    if (newMeal.date < today) {
       newErrors.date = 'Date cannot be in the past.';
     }
 
-    if (!mealType) {
+    if (!newMeal.mealType) {
       newErrors.mealType = 'Meal type is required.';
     }
 
-    foods.forEach((food, index) => {
+    newMeal.foods.forEach((food, index) => {
       if (!food.name) {
         newErrors[`name_${index}`] = 'Food name is required.';
       }
@@ -36,57 +39,41 @@ const MealPage = () => {
   const handleAddMeal = (e) => {
     e.preventDefault();
     if (validateInputs()) {
-      const newMeal = {
-        id: Date.now(),
-        date,
-        mealType,
-        foods: [...foods],
-      };
-      setMeals([...meals, newMeal]);
-      setDate(new Date().toISOString().split('T')[0]);
-      setMealType('');
-      setFoods([{ name: '', calories: '' }]);
+      setMeals([...meals, { ...newMeal, id: Date.now() }]);
+      setNewMeal({
+        date: new Date().toISOString().split('T')[0],
+        mealType: '',
+        foods: [{ name: '', calories: '' }],
+      });
       setErrors({});
     }
   };
 
   const addFood = () => {
-    setFoods([...foods, { name: '', calories: '' }]);
+    setNewMeal({
+      ...newMeal,
+      foods: [...newMeal.foods, { name: '', calories: '' }],
+    });
   };
 
   const removeFood = (index) => {
-    setFoods(foods.filter((_, i) => i !== index));
-  };
-
-  const handleFoodChange = (index, field, value) => {
-    const newFoods = [...foods];
-    newFoods[index][field] = value;
-    setFoods(newFoods);
+    const updatedFoods = newMeal.foods.filter((_, i) => i !== index);
+    setNewMeal({
+      ...newMeal,
+      foods: updatedFoods,
+    });
   };
 
   const groupedMeals = meals.reduce((acc, meal) => {
     if (!acc[meal.date]) {
-      acc[meal.date] = [];
+      acc[meal.date] = {};
     }
-    acc[meal.date].push(meal);
+    if (!acc[meal.date][meal.mealType]) {
+      acc[meal.date][meal.mealType] = [];
+    }
+    acc[meal.date][meal.mealType].push(meal);
     return acc;
   }, {});
-
-  const Input = ({ label, icon: Icon, type, value, onChange, error }) => (
-    <div className='mb-4'>
-      <label className='flex items-center text-sm font-medium text-gray-700 mb-2'>
-        <Icon className='mr-2 text-green-600' />
-        {label}
-      </label>
-      <input
-        type={type}
-        value={value}
-        onChange={onChange}
-        className='w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all'
-      />
-      {error && <p className='mt-1 text-red-500 text-sm'>{error}</p>}
-    </div>
-  );
 
   return (
     <div className='min-h-screen bg-gray-50 py-8'>
@@ -109,20 +96,40 @@ const MealPage = () => {
                 label='Date'
                 icon={FaCalendarAlt}
                 type='date'
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
+                value={newMeal.date}
+                onChange={(e) =>
+                  setNewMeal({ ...newMeal, date: e.target.value })
+                }
                 error={errors.date}
               />
-              <Input
-                label='Meal Type'
-                icon={FaUtensils}
-                type='text'
-                value={mealType}
-                onChange={(e) => setMealType(e.target.value)}
-                error={errors.mealType}
-              />
+              <div className='mb-4'>
+                <label className='flex items-center text-sm font-medium text-gray-700 mb-2'>
+                  <FaUtensils className='mr-2 text-green-600' />
+                  Meal Type
+                </label>
+                <div className='flex gap-4'>
+                  {['Breakfast', 'Lunch', 'Dinner', 'Snack'].map((type) => (
+                    <label key={type} className='flex items-center'>
+                      <input
+                        type='radio'
+                        name='mealType'
+                        value={type}
+                        checked={newMeal.mealType === type}
+                        onChange={(e) =>
+                          setNewMeal({ ...newMeal, mealType: e.target.value })
+                        }
+                        className='mr-2'
+                      />
+                      {type}
+                    </label>
+                  ))}
+                </div>
+                {errors.mealType && (
+                  <p className='mt-1 text-red-500 text-sm'>{errors.mealType}</p>
+                )}
+              </div>
 
-              {foods.map((food, index) => (
+              {newMeal.foods.map((food, index) => (
                 <div
                   key={index}
                   className='mb-6 p-4 bg-gray-50 rounded-xl border border-gray-100'
@@ -147,9 +154,14 @@ const MealPage = () => {
                     icon={FaUtensils}
                     type='text'
                     value={food.name}
-                    onChange={(e) =>
-                      handleFoodChange(index, 'name', e.target.value)
-                    }
+                    onChange={(e) => {
+                      const updatedFoods = [...newMeal.foods];
+                      updatedFoods[index].name = e.target.value;
+                      setNewMeal({
+                        ...newMeal,
+                        foods: updatedFoods,
+                      });
+                    }}
                     error={errors[`name_${index}`]}
                   />
 
@@ -158,9 +170,14 @@ const MealPage = () => {
                     icon={FaUtensils}
                     type='number'
                     value={food.calories}
-                    onChange={(e) =>
-                      handleFoodChange(index, 'calories', e.target.value)
-                    }
+                    onChange={(e) => {
+                      const updatedFoods = [...newMeal.foods];
+                      updatedFoods[index].calories = e.target.value;
+                      setNewMeal({
+                        ...newMeal,
+                        foods: updatedFoods,
+                      });
+                    }}
                     error={errors[`calories_${index}`]}
                   />
                 </div>
@@ -191,7 +208,7 @@ const MealPage = () => {
               Meal History
             </h2>
             <div className='space-y-6'>
-              {Object.entries(groupedMeals).map(([date, mealGroup]) => (
+              {Object.entries(groupedMeals).map(([date, mealTypes]) => (
                 <div
                   key={date}
                   className='bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow'
@@ -203,29 +220,31 @@ const MealPage = () => {
                     </h3>
                   </div>
 
-                  {mealGroup.map((meal) => (
-                    <div key={meal.id} className='space-y-4'>
-                      <p className='font-medium text-gray-900'>
-                        {meal.mealType}
-                      </p>
-                      {meal.foods.map((food, index) => (
-                        <div
-                          key={index}
-                          className='p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors'
-                        >
-                          <div className='flex items-start'>
-                            <FaUtensils className='text-green-600 mt-1 mr-3' />
-                            <div>
-                              <p className='font-medium text-gray-900'>
-                                {food.name}
-                              </p>
-                              <div className='mt-1 text-sm text-gray-600'>
-                                <span className='inline-flex items-center'>
-                                  {food.calories} calories
-                                </span>
+                  {Object.entries(mealTypes).map(([mealType, mealGroup]) => (
+                    <div key={mealType} className='space-y-4'>
+                      <p className='font-medium text-gray-900'>{mealType}</p>
+                      {mealGroup.map((meal) => (
+                        <div key={meal.id} className='space-y-4'>
+                          {meal.foods.map((food, index) => (
+                            <div
+                              key={index}
+                              className='p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors'
+                            >
+                              <div className='flex items-start'>
+                                <FaUtensils className='text-green-600 mt-1 mr-3' />
+                                <div>
+                                  <p className='font-medium text-gray-900'>
+                                    {food.name}
+                                  </p>
+                                  <div className='mt-1 text-sm text-gray-600'>
+                                    <span className='inline-flex items-center'>
+                                      {food.calories} calories
+                                    </span>
+                                  </div>
+                                </div>
                               </div>
                             </div>
-                          </div>
+                          ))}
                         </div>
                       ))}
                     </div>
