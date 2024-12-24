@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaEnvelope, FaLock } from 'react-icons/fa';
 import axiosInstance from '../axiosInstance';
@@ -12,6 +12,12 @@ const Signup = () => {
   const navigate = useNavigate();
   const { setUserData } = useContext(AuthContext);
 
+  useEffect(() => {
+    if (localStorage.getItem('token')) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -20,7 +26,7 @@ const Signup = () => {
         email,
         password,
       });
-      setUserData({ isLoggedIn: true, name: response.data.name });
+      setUserData({ name: response.data.name });
       localStorage.setItem('token', response.data.token);
       navigate('/dashboard');
     } catch (err) {

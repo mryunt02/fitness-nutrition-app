@@ -32,8 +32,8 @@ const App = () => {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/profile' element={<Profile />} />
-          <Route path='/workout' element={<WorkoutPage />} />
-          <Route path='/meal' element={<MealPage />} />
+          <Route path='/workouts' element={<WorkoutPage />} />
+          <Route path='/meals' element={<MealPage />} />
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/progress' element={<ProgressPage />} />
           <Route path='/ai-assistant' element={<AiAssistant />} />

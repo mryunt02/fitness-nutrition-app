@@ -12,11 +12,9 @@ import {
   LogIn,
 } from 'lucide-react';
 import NavLink from './NavLink';
-import { AuthContext } from '../App';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { userData } = useContext(AuthContext);
 
   return (
     <nav className='bg-white shadow-lg'>
@@ -31,7 +29,7 @@ const Navbar = () => {
             </button>
           </div>
           <div className={`hidden md:flex space-x-4`}>
-            {userData.isLoggedIn ? (
+            {localStorage.getItem('token') ? (
               <>
                 <NavLink
                   to='/dashboard'
