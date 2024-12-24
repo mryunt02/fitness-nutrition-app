@@ -8,6 +8,7 @@ import {
   FaPlus,
   FaTrash,
 } from 'react-icons/fa';
+import { Input } from '../components/Input';
 
 const WorkoutPage = () => {
   const [workouts, setWorkouts] = useState([]);
@@ -57,21 +58,20 @@ const WorkoutPage = () => {
   };
 
   const addExercise = () => {
-    setNewWorkout({
-      ...newWorkout,
+    setNewWorkout((prevState) => ({
+      ...prevState,
       exercises: [
-        ...newWorkout.exercises,
+        ...prevState.exercises,
         { name: '', reps: '', sets: '', duration: '' },
       ],
-    });
+    }));
   };
 
   const removeExercise = (index) => {
-    const updatedExercises = newWorkout.exercises.filter((_, i) => i !== index);
-    setNewWorkout({
-      ...newWorkout,
-      exercises: updatedExercises,
-    });
+    setNewWorkout((prevState) => ({
+      ...prevState,
+      exercises: prevState.exercises.filter((_, i) => i !== index),
+    }));
   };
 
   const groupedWorkouts = workouts.reduce((acc, workout) => {
@@ -81,22 +81,6 @@ const WorkoutPage = () => {
     acc[workout.date].push(workout);
     return acc;
   }, {});
-
-  const Input = ({ label, icon: Icon, type, value, onChange, error }) => (
-    <div className='mb-4'>
-      <label className='flex items-center text-sm font-medium text-gray-700 mb-2'>
-        <Icon className='mr-2 text-green-600' />
-        {label}
-      </label>
-      <input
-        type={type}
-        value={value}
-        onChange={onChange}
-        className='w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all'
-      />
-      {error && <p className='mt-1 text-red-500 text-sm'>{error}</p>}
-    </div>
-  );
 
   return (
     <div className='min-h-screen bg-gray-50 py-8'>
@@ -125,7 +109,10 @@ const WorkoutPage = () => {
                 type='date'
                 value={newWorkout.date}
                 onChange={(e) =>
-                  setNewWorkout({ ...newWorkout, date: e.target.value })
+                  setNewWorkout((prevState) => ({
+                    ...prevState,
+                    date: e.target.value,
+                  }))
                 }
                 error={errors.date}
               />
@@ -158,10 +145,10 @@ const WorkoutPage = () => {
                     onChange={(e) => {
                       const updatedExercises = [...newWorkout.exercises];
                       updatedExercises[index].name = e.target.value;
-                      setNewWorkout({
-                        ...newWorkout,
+                      setNewWorkout((prevState) => ({
+                        ...prevState,
                         exercises: updatedExercises,
-                      });
+                      }));
                     }}
                     error={errors[`name_${index}`]}
                   />
@@ -175,10 +162,10 @@ const WorkoutPage = () => {
                       onChange={(e) => {
                         const updatedExercises = [...newWorkout.exercises];
                         updatedExercises[index].reps = e.target.value;
-                        setNewWorkout({
-                          ...newWorkout,
+                        setNewWorkout((prevState) => ({
+                          ...prevState,
                           exercises: updatedExercises,
-                        });
+                        }));
                       }}
                       error={errors[`reps_${index}`]}
                     />
@@ -191,10 +178,10 @@ const WorkoutPage = () => {
                       onChange={(e) => {
                         const updatedExercises = [...newWorkout.exercises];
                         updatedExercises[index].sets = e.target.value;
-                        setNewWorkout({
-                          ...newWorkout,
+                        setNewWorkout((prevState) => ({
+                          ...prevState,
                           exercises: updatedExercises,
-                        });
+                        }));
                       }}
                       error={errors[`sets_${index}`]}
                     />
@@ -207,10 +194,10 @@ const WorkoutPage = () => {
                       onChange={(e) => {
                         const updatedExercises = [...newWorkout.exercises];
                         updatedExercises[index].duration = e.target.value;
-                        setNewWorkout({
-                          ...newWorkout,
+                        setNewWorkout((prevState) => ({
+                          ...prevState,
                           exercises: updatedExercises,
-                        });
+                        }));
                       }}
                       error={errors[`duration_${index}`]}
                     />

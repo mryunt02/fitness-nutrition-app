@@ -6,7 +6,7 @@ const Home = () => {
     <div className='min-h-screen bg-gradient-to-b from-white to-green-50'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         {/* Hero Section */}
-        <header className='py-16 md:py-24 text-center'>
+        <header className='pt-16 md:pt-24 text-center'>
           <div className='max-w-3xl mx-auto'>
             <h1 className='text-5xl md:text-6xl font-bold text-gray-900 mb-6'>
               Welcome to <span className='text-green-600'>FitTrack</span>

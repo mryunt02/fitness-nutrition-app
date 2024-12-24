@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Profile from './components/Profile';
+import Profile from './pages/Profile';
 import WorkoutPage from './pages/WorkoutPage';
-import MealPage from './components/MealPage';
+import MealPage from './pages/MealPage';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import ProgressPage from './pages/ProgressPage';
