@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {
   FaUser,
   FaWeight,
@@ -9,11 +9,30 @@ import {
 } from 'react-icons/fa';
 import { StatCard } from '../components/StatCard';
 import { AuthContext } from '../App';
+import axiosInstance from '../axiosInstance';
 
 const Profile = () => {
   const { userData, setUserData } = useContext(AuthContext);
-
   const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId');
+        const response = await axiosInstance.get(`/api/users/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUserData(response.data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, [setUserData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,6 +40,21 @@ const Profile = () => {
       ...prevData,
       [name]: value,
     }));
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
+      await axiosInstance.post(`/api/users/${userId}`, userData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating user data:', error);
+    }
   };
 
   return (
@@ -77,7 +111,12 @@ const Profile = () => {
             Edit Profile
           </h2>
           {isEditing ? (
-            <form>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSaveChanges();
+              }}
+            >
               <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <div className='mb-4'>
                   <label className='block text-sm font-medium text-gray-700'>
@@ -160,8 +199,7 @@ const Profile = () => {
               </div>
               <div className='flex justify-end mt-6'>
                 <button
-                  type='button'
-                  onClick={() => setIsEditing(false)}
+                  type='submit'
                   className='bg-indigo-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
                 >
                   Save Changes

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaCalendarAlt, FaUtensils, FaPlus, FaTrash } from 'react-icons/fa';
 import { Input } from '../components/Input';
+import axiosInstance from '../axiosInstance';
 
 const MealPage = () => {
   const [meals, setMeals] = useState([]);
@@ -10,6 +11,26 @@ const MealPage = () => {
     foods: [{ name: '', calories: '' }],
   });
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+
+    const fetchMeals = async () => {
+      try {
+        const response = await axiosInstance.get(`/api/meals/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setMeals(response.data);
+      } catch (error) {
+        console.error('Error fetching meals:', error);
+      }
+    };
+
+    fetchMeals();
+  }, []);
 
   const validateInputs = () => {
     const newErrors = {};
@@ -36,16 +57,34 @@ const MealPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleAddMeal = (e) => {
+  const handleAddMeal = async (e) => {
     e.preventDefault();
     if (validateInputs()) {
-      setMeals([...meals, { ...newMeal, id: Date.now() }]);
-      setNewMeal({
-        date: new Date().toISOString().split('T')[0],
-        mealType: '',
-        foods: [{ name: '', calories: '' }],
-      });
-      setErrors({});
+      try {
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId');
+        const response = await axiosInstance.post(
+          '/api/meals',
+          {
+            ...newMeal,
+            userId,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setMeals([...meals, response.data]);
+        setNewMeal({
+          date: new Date().toISOString().split('T')[0],
+          mealType: '',
+          foods: [{ name: '', calories: '' }],
+        });
+        setErrors({});
+      } catch (error) {
+        console.error('Error adding meal:', error);
+      }
     }
   };
 

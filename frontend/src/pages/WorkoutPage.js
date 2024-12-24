@@ -1,21 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import {
-  FaCalendarAlt,
-  FaDumbbell,
-  FaClock,
-  FaListOl,
-  FaTh,
-  FaPlus,
-  FaTrash,
-} from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { FaCalendarAlt, FaUtensils, FaPlus, FaTrash } from 'react-icons/fa';
 import { Input } from '../components/Input';
 import axiosInstance from '../axiosInstance';
 
-const WorkoutPage = () => {
-  const [workouts, setWorkouts] = useState([]);
-  const [newWorkout, setNewWorkout] = useState({
+const MealPage = () => {
+  const [meals, setMeals] = useState([]);
+  const [newMeal, setNewMeal] = useState({
     date: new Date().toISOString().split('T')[0],
-    exercises: [{ name: '', reps: '', sets: '', duration: '' }],
+    mealType: '',
+    foods: [{ name: '', calories: '' }],
   });
   const [errors, setErrors] = useState({});
 
@@ -23,43 +16,40 @@ const WorkoutPage = () => {
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
 
-    const fetchWorkouts = async () => {
+    const fetchMeals = async () => {
       try {
-        const response = await axiosInstance.get(`/api/workouts/${userId}`, {
+        const response = await axiosInstance.get(`/api/meals/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setWorkouts(response.data);
+        setMeals(response.data);
       } catch (error) {
-        console.error('Error fetching workouts:', error);
+        console.error('Error fetching meals:', error);
       }
     };
 
-    fetchWorkouts();
+    fetchMeals();
   }, []);
-  console.log(workouts);
 
   const validateInputs = () => {
     const newErrors = {};
     const today = new Date().toISOString().split('T')[0];
 
-    if (newWorkout.date < today) {
+    if (newMeal.date < today) {
       newErrors.date = 'Date cannot be in the past.';
     }
 
-    newWorkout.exercises.forEach((exercise, index) => {
-      if (!exercise.name) {
-        newErrors[`name_${index}`] = 'Exercise name is required.';
+    if (!newMeal.mealType) {
+      newErrors.mealType = 'Meal type is required.';
+    }
+
+    newMeal.foods.forEach((food, index) => {
+      if (!food.name) {
+        newErrors[`name_${index}`] = 'Food name is required.';
       }
-      if (exercise.reps <= 0) {
-        newErrors[`reps_${index}`] = 'Reps must be a positive number.';
-      }
-      if (exercise.sets <= 0) {
-        newErrors[`sets_${index}`] = 'Sets must be a positive number.';
-      }
-      if (exercise.duration <= 0) {
-        newErrors[`duration_${index}`] = 'Duration must be a positive number.';
+      if (food.calories <= 0) {
+        newErrors[`calories_${index}`] = 'Calories must be a positive number.';
       }
     });
 
@@ -67,16 +57,16 @@ const WorkoutPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleAddWorkout = async (e) => {
+  const handleAddMeal = async (e) => {
     e.preventDefault();
     if (validateInputs()) {
       try {
         const token = localStorage.getItem('token');
         const userId = localStorage.getItem('userId');
         const response = await axiosInstance.post(
-          '/api/workouts',
+          '/api/meals',
           {
-            ...newWorkout,
+            ...newMeal,
             userId,
           },
           {
@@ -85,39 +75,42 @@ const WorkoutPage = () => {
             },
           }
         );
-        setWorkouts([...workouts, response.data]);
-        setNewWorkout({
+        setMeals([...meals, response.data]);
+        setNewMeal({
           date: new Date().toISOString().split('T')[0],
-          exercises: [{ name: '', reps: '', sets: '', duration: '' }],
+          mealType: '',
+          foods: [{ name: '', calories: '' }],
         });
         setErrors({});
       } catch (error) {
-        console.error('Error adding workout:', error);
+        console.error('Error adding meal:', error);
       }
     }
   };
-  const addExercise = () => {
-    setNewWorkout((prevState) => ({
-      ...prevState,
-      exercises: [
-        ...prevState.exercises,
-        { name: '', reps: '', sets: '', duration: '' },
-      ],
-    }));
+
+  const addFood = () => {
+    setNewMeal({
+      ...newMeal,
+      foods: [...newMeal.foods, { name: '', calories: '' }],
+    });
   };
 
-  const removeExercise = (index) => {
-    setNewWorkout((prevState) => ({
-      ...prevState,
-      exercises: prevState.exercises.filter((_, i) => i !== index),
-    }));
+  const removeFood = (index) => {
+    const updatedFoods = newMeal.foods.filter((_, i) => i !== index);
+    setNewMeal({
+      ...newMeal,
+      foods: updatedFoods,
+    });
   };
 
-  const groupedWorkouts = workouts.reduce((acc, workout) => {
-    if (!acc[workout.date]) {
-      acc[workout.date] = [];
+  const groupedMeals = meals.reduce((acc, meal) => {
+    if (!acc[meal.date]) {
+      acc[meal.date] = {};
     }
-    acc[workout.date].push(workout);
+    if (!acc[meal.date][meal.mealType]) {
+      acc[meal.date][meal.mealType] = [];
+    }
+    acc[meal.date][meal.mealType].push(meal);
     return acc;
   }, {});
 
@@ -126,49 +119,68 @@ const WorkoutPage = () => {
       <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='flex justify-between items-center mb-8'>
           <div>
-            <h1 className='text-4xl font-bold text-gray-900'>
-              Workout Tracker
-            </h1>
-            <p className='mt-2 text-gray-600'>
-              Log and track your exercise routine
-            </p>
+            <h1 className='text-4xl font-bold text-gray-900'>Meal Tracker</h1>
+            <p className='mt-2 text-gray-600'>Log and track your meals</p>
           </div>
         </div>
 
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
-          {/* Workout Form */}
+          {/* Meal Form */}
           <div className='bg-white rounded-xl shadow-lg p-6'>
             <h2 className='text-xl font-semibold text-gray-900 mb-6'>
-              Add New Workout
+              Add New Meal
             </h2>
-            <form onSubmit={handleAddWorkout}>
+            <form onSubmit={handleAddMeal}>
               <Input
                 label='Date'
                 icon={FaCalendarAlt}
                 type='date'
-                value={newWorkout.date}
+                value={newMeal.date}
                 onChange={(e) =>
-                  setNewWorkout((prevState) => ({
-                    ...prevState,
-                    date: e.target.value,
-                  }))
+                  setNewMeal({ ...newMeal, date: e.target.value })
                 }
                 error={errors.date}
               />
+              <div className='mb-4'>
+                <label className='flex items-center text-sm font-medium text-gray-700 mb-2'>
+                  <FaUtensils className='mr-2 text-green-600' />
+                  Meal Type
+                </label>
+                <div className='flex gap-4'>
+                  {['Breakfast', 'Lunch', 'Dinner', 'Snack'].map((type) => (
+                    <label key={type} className='flex items-center'>
+                      <input
+                        type='radio'
+                        name='mealType'
+                        value={type}
+                        checked={newMeal.mealType === type}
+                        onChange={(e) =>
+                          setNewMeal({ ...newMeal, mealType: e.target.value })
+                        }
+                        className='mr-2'
+                      />
+                      {type}
+                    </label>
+                  ))}
+                </div>
+                {errors.mealType && (
+                  <p className='mt-1 text-red-500 text-sm'>{errors.mealType}</p>
+                )}
+              </div>
 
-              {newWorkout.exercises.map((exercise, index) => (
+              {newMeal.foods.map((food, index) => (
                 <div
                   key={index}
                   className='mb-6 p-4 bg-gray-50 rounded-xl border border-gray-100'
                 >
                   <div className='flex justify-between items-center mb-4'>
                     <h3 className='text-lg font-medium text-gray-900'>
-                      Exercise {index + 1}
+                      Food {index + 1}
                     </h3>
                     {index > 0 && (
                       <button
                         type='button'
-                        onClick={() => removeExercise(index)}
+                        onClick={() => removeFood(index)}
                         className='text-red-500 hover:text-red-600 transition-colors'
                       >
                         <FaTrash />
@@ -177,99 +189,65 @@ const WorkoutPage = () => {
                   </div>
 
                   <Input
-                    label='Exercise Name'
-                    icon={FaDumbbell}
+                    label='Food Name'
+                    icon={FaUtensils}
                     type='text'
-                    value={exercise.name}
+                    value={food.name}
                     onChange={(e) => {
-                      const updatedExercises = [...newWorkout.exercises];
-                      updatedExercises[index].name = e.target.value;
-                      setNewWorkout((prevState) => ({
-                        ...prevState,
-                        exercises: updatedExercises,
-                      }));
+                      const updatedFoods = [...newMeal.foods];
+                      updatedFoods[index].name = e.target.value;
+                      setNewMeal({
+                        ...newMeal,
+                        foods: updatedFoods,
+                      });
                     }}
                     error={errors[`name_${index}`]}
                   />
 
-                  <div className='grid grid-cols-3 gap-4'>
-                    <Input
-                      label='Reps'
-                      icon={FaListOl}
-                      type='number'
-                      value={exercise.reps}
-                      onChange={(e) => {
-                        const updatedExercises = [...newWorkout.exercises];
-                        updatedExercises[index].reps = e.target.value;
-                        setNewWorkout((prevState) => ({
-                          ...prevState,
-                          exercises: updatedExercises,
-                        }));
-                      }}
-                      error={errors[`reps_${index}`]}
-                    />
-
-                    <Input
-                      label='Sets'
-                      icon={FaTh}
-                      type='number'
-                      value={exercise.sets}
-                      onChange={(e) => {
-                        const updatedExercises = [...newWorkout.exercises];
-                        updatedExercises[index].sets = e.target.value;
-                        setNewWorkout((prevState) => ({
-                          ...prevState,
-                          exercises: updatedExercises,
-                        }));
-                      }}
-                      error={errors[`sets_${index}`]}
-                    />
-
-                    <Input
-                      label='Duration'
-                      icon={FaClock}
-                      type='number'
-                      value={exercise.duration}
-                      onChange={(e) => {
-                        const updatedExercises = [...newWorkout.exercises];
-                        updatedExercises[index].duration = e.target.value;
-                        setNewWorkout((prevState) => ({
-                          ...prevState,
-                          exercises: updatedExercises,
-                        }));
-                      }}
-                      error={errors[`duration_${index}`]}
-                    />
-                  </div>
+                  <Input
+                    label='Calories'
+                    icon={FaUtensils}
+                    type='number'
+                    value={food.calories}
+                    onChange={(e) => {
+                      const updatedFoods = [...newMeal.foods];
+                      updatedFoods[index].calories = e.target.value;
+                      setNewMeal({
+                        ...newMeal,
+                        foods: updatedFoods,
+                      });
+                    }}
+                    error={errors[`calories_${index}`]}
+                  />
                 </div>
               ))}
 
               <div className='flex gap-4 mt-6'>
                 <button
                   type='button'
-                  onClick={addExercise}
+                  onClick={addFood}
                   className='flex items-center justify-center px-4 py-2 border border-green-500 text-green-500 rounded-lg hover:bg-green-50 transition-colors'
                 >
                   <FaPlus className='mr-2' />
-                  Add Exercise
+                  Add Food
                 </button>
                 <button
                   type='submit'
                   className='flex-1 bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors'
                 >
-                  Save Workout
+                  Save Meal
                 </button>
               </div>
             </form>
           </div>
 
-          {/* Workout History */}
+          {/* Meal History */}
           <div>
             <h2 className='text-xl font-semibold text-gray-900 mb-6'>
-              Workout History
+              Meal History
             </h2>
             <div className='space-y-6'>
-              {Object.entries(groupedWorkouts).map(([date, workoutGroup]) => (
+              {Object.entries(groupedMeals).map(([date, mealTypes]) => (
                 <div
                   key={date}
                   className='bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow'
@@ -281,34 +259,32 @@ const WorkoutPage = () => {
                     </h3>
                   </div>
 
-                  {workoutGroup.map((workout) => (
-                    <div key={workout.id} className='space-y-4'>
-                      {workout.exercises.map((exercise, index) => (
-                        <div
-                          key={index}
-                          className='p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors'
-                        >
-                          <div className='flex items-start'>
-                            <FaDumbbell className='text-green-600 mt-1 mr-3' />
-                            <div>
-                              <p className='font-medium text-gray-900'>
-                                {exercise.name}
-                              </p>
-                              <div className='mt-1 text-sm text-gray-600'>
-                                <span className='inline-flex items-center mr-4'>
-                                  <FaListOl className='mr-1' /> {exercise.reps}{' '}
-                                  reps
-                                </span>
-                                <span className='inline-flex items-center mr-4'>
-                                  <FaTh className='mr-1' /> {exercise.sets} sets
-                                </span>
-                                <span className='inline-flex items-center'>
-                                  <FaClock className='mr-1' />{' '}
-                                  {exercise.duration} min
-                                </span>
+                  {Object.entries(mealTypes).map(([mealType, mealGroup]) => (
+                    <div key={mealType} className='space-y-4'>
+                      <p className='font-medium text-gray-900'>{mealType}</p>
+                      {mealGroup.map((meal) => (
+                        <div key={meal.id} className='space-y-4'>
+                          {meal.foods &&
+                            meal.foods.map((food, index) => (
+                              <div
+                                key={index}
+                                className='p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors'
+                              >
+                                <div className='flex items-start'>
+                                  <FaUtensils className='text-green-600 mt-1 mr-3' />
+                                  <div>
+                                    <p className='font-medium text-gray-900'>
+                                      {food.name}
+                                    </p>
+                                    <div className='mt-1 text-sm text-gray-600'>
+                                      <span className='inline-flex items-center'>
+                                        {food.calories} calories
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          </div>
+                            ))}
                         </div>
                       ))}
                     </div>
@@ -323,4 +299,4 @@ const WorkoutPage = () => {
   );
 };
 
-export default WorkoutPage;
+export default MealPage;

@@ -24,7 +24,6 @@ const App = () => {
     healthCondition: 'None',
     goal: 'Weight Loss',
   });
-
   return (
     <AuthContext.Provider value={{ userData, setUserData }}>
       <Router>

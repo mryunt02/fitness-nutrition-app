@@ -1,4 +1,3 @@
-// filepath: /Users/bugrahanyunt/Developer/fitness-nutrition-app/backend/models/User.js
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
