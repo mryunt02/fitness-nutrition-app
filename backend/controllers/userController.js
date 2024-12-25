@@ -47,6 +47,11 @@ const getAiSuggestionForUser = async (req, res) => {
   try {
     const user = await userService.getUserById(req.params.id);
     const suggestion = await getAiSuggestion(user);
+    await userService.saveAiSuggestion(
+      req.params.id,
+      'Get AI Suggestion',
+      suggestion
+    );
     res.status(200).send({ suggestion });
   } catch (error) {
     console.error('Error getting AI suggestion:', error);

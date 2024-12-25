@@ -66,9 +66,21 @@ const updateUserProfile = async (userId, userData) => {
   return user;
 };
 
+const saveAiSuggestion = async (userId, question, answer) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  user.aiSuggestions.push({ question, answer });
+  await user.save();
+  return user;
+};
+
 module.exports = {
   createUser,
   getUserById,
   authenticateUser,
   updateUserProfile,
+  saveAiSuggestion,
 };

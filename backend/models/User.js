@@ -14,6 +14,13 @@ const userSchema = new mongoose.Schema({
   password: String,
   meals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Meal' }],
   workouts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Workout' }],
+  aiSuggestions: [
+    {
+      question: String,
+      answer: String,
+      createdAt: { type: Date, default: Date.now },
+    },
+  ],
 });
 
 userSchema.pre('save', async function (next) {

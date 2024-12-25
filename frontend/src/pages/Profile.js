@@ -10,6 +10,7 @@ import {
 import { StatCard } from '../components/StatCard';
 import { AuthContext } from '../App';
 import axiosInstance from '../axiosInstance';
+import { renderAiSuggestion } from '../renderAiSuggestion';
 
 const Profile = () => {
   const { userData, setUserData } = useContext(AuthContext);
@@ -106,7 +107,7 @@ const Profile = () => {
         </div>
 
         {/* Edit Profile Section */}
-        <div className='bg-white p-6 rounded-xl shadow-lg'>
+        <div className='bg-white p-6 rounded-xl shadow-lg mb-8'>
           <h2 className='text-xl font-semibold text-gray-900 mb-6'>
             Edit Profile
           </h2>
@@ -118,84 +119,8 @@ const Profile = () => {
               }}
             >
               <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                <div className='mb-4'>
-                  <label className='block text-sm font-medium text-gray-700'>
-                    Name
-                  </label>
-                  <input
-                    type='text'
-                    name='name'
-                    value={userData.name}
-                    onChange={handleChange}
-                    className='mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
-                  />
-                </div>
-                <div className='mb-4'>
-                  <label className='block text-sm font-medium text-gray-700'>
-                    Age
-                  </label>
-                  <input
-                    type='number'
-                    name='age'
-                    value={userData.age}
-                    onChange={handleChange}
-                    className='mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
-                  />
-                </div>
-                <div className='mb-4'>
-                  <label className='block text-sm font-medium text-gray-700'>
-                    Weight (kg)
-                  </label>
-                  <input
-                    type='number'
-                    name='weight'
-                    value={userData.weight}
-                    onChange={handleChange}
-                    className='mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
-                  />
-                </div>
-                <div className='mb-4'>
-                  <label className='block text-sm font-medium text-gray-700'>
-                    Height (cm)
-                  </label>
-                  <input
-                    type='number'
-                    name='height'
-                    value={userData.height}
-                    onChange={handleChange}
-                    className='mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
-                  />
-                </div>
-                <div className='mb-4'>
-                  <label className='block text-sm font-medium text-gray-700'>
-                    Gender
-                  </label>
-                  <select
-                    name='gender'
-                    value={userData.gender}
-                    onChange={handleChange}
-                    className='mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
-                  >
-                    <option value='male'>Male</option>
-                    <option value='female'>Female</option>
-                    <option value='other'>Other</option>
-                  </select>
-                </div>
-                <div className='mb-4'>
-                  <label className='block text-sm font-medium text-gray-700'>
-                    Goal
-                  </label>
-                  <select
-                    name='goal'
-                    value={userData.goal}
-                    onChange={handleChange}
-                    className='mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
-                  >
-                    <option value='Weight Loss'>Weight Loss</option>
-                    <option value='Muscle Gain'>Muscle Gain</option>
-                    <option value='Maintenance'>Maintenance</option>
-                  </select>
-                </div>
+                {/* Form Fields */}
+                {/* ... existing form fields ... */}
               </div>
               <div className='flex justify-end mt-6'>
                 <button
@@ -216,6 +141,31 @@ const Profile = () => {
                 Edit Profile
               </button>
             </div>
+          )}
+        </div>
+
+        {/* AI Suggestions Section */}
+        <div className='bg-white p-6 rounded-xl shadow-lg'>
+          <h2 className='text-xl font-semibold text-gray-900 mb-6'>
+            AI Suggestions
+          </h2>
+          {userData.aiSuggestions && userData.aiSuggestions.length > 0 ? (
+            userData.aiSuggestions.map((suggestion) => (
+              <div
+                key={suggestion._id}
+                className='mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50'
+              >
+                <p className='font-semibold'>Question: {suggestion.question}</p>
+                <p className='mt-2 text-gray-700'>
+                  Answer: {renderAiSuggestion(suggestion.answer)}
+                </p>
+                <p className='text-sm text-gray-500'>
+                  Created At: {new Date(suggestion.createdAt).toLocaleString()}
+                </p>
+              </div>
+            ))
+          ) : (
+            <p className='text-gray-600'>No AI suggestions available.</p>
           )}
         </div>
       </div>

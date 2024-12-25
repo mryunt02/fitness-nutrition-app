@@ -1,11 +1,13 @@
-// filepath: /Users/bugrahanyunt/Developer/fitness-nutrition-app/frontend/src/pages/AiAssistant.js
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import axiosInstance from '../axiosInstance';
 import { BookOpen, CheckCircle, Loader2 } from 'lucide-react';
+import { AuthContext } from '../App';
+import { renderAiSuggestion } from '../renderAiSuggestion';
 
 const AiAssistantPage = () => {
   const [responses, setResponses] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { userData } = useContext(AuthContext);
 
   const handleGetAiSuggestion = async () => {
     setIsLoading(true);
@@ -26,32 +28,12 @@ const AiAssistantPage = () => {
         answer: aiSuggestion,
       };
 
-      // Save the response to the backend
-
       setResponses([...responses, newResponse]);
     } catch (error) {
       console.error('Error getting AI suggestion:', error);
     }
     setIsLoading(false);
   };
-
-  const renderAiSuggestion = (text) => {
-    return text.split('**').map((segment, index) => {
-      if (index % 2 !== 0) {
-        return (
-          <div key={index} className='inline-block mx-1'>
-            <span className='bg-yellow-300 px-2 py-1 rounded'>{segment}</span>
-          </div>
-        );
-      }
-      return segment.split('\n').map((line, i) => (
-        <p key={`${index}-${i}`} className='my-1'>
-          {line}
-        </p>
-      ));
-    });
-  };
-  console.log(responses);
 
   return (
     <div className='min-h-screen bg-gray-50 py-8'>
@@ -73,12 +55,12 @@ const AiAssistantPage = () => {
             {isLoading ? (
               <>
                 <Loader2 className='w-5 h-5 mr-2 animate-spin' />
-                Getting Suggestion...
+                Getting New Suggestion...
               </>
             ) : (
               <>
                 <CheckCircle className='w-5 h-5 mr-2' />
-                Get AI Suggestion
+                Get New AI Suggestion
               </>
             )}
           </button>
@@ -104,6 +86,29 @@ const AiAssistantPage = () => {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* AI Suggestions Section */}
+        {userData.aiSuggestions && userData.aiSuggestions.length > 0 && (
+          <div className='mt-6 bg-white rounded-lg shadow-lg p-6'>
+            <h2 className='text-2xl font-bold text-blue-600 mb-4'>
+              Your AI Suggestions
+            </h2>
+            {userData.aiSuggestions.map((suggestion) => (
+              <div
+                key={suggestion._id}
+                className='mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50'
+              >
+                <p className='font-semibold'>Question: {suggestion.question}</p>
+                <p className='mt-2 text-gray-700'>
+                  Answer: {renderAiSuggestion(suggestion.answer)}
+                </p>
+                <p className='text-sm text-gray-500'>
+                  Created At: {new Date(suggestion.createdAt).toLocaleString()}
+                </p>
+              </div>
+            ))}
           </div>
         )}
       </div>
