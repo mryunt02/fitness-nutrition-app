@@ -3,18 +3,14 @@ const mongoose = require('mongoose');
 const mealSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   date: String,
-  meals: [
+  mealType: String,
+  foods: [
     {
-      type: String,
-      foods: [
-        {
-          name: String,
-          calories: Number,
-          protein: Number,
-          carbs: Number,
-          fats: Number,
-        },
-      ],
+      name: String,
+      calories: Number,
+      protein: Number,
+      carbs: Number,
+      fats: Number,
     },
   ],
 });

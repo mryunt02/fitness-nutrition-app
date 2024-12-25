@@ -1,15 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaCalendarAlt, FaUtensils, FaPlus, FaTrash } from 'react-icons/fa';
 import { Input } from '../components/Input';
+import axiosInstance from '../axiosInstance';
 
 const MealPage = () => {
   const [meals, setMeals] = useState([]);
   const [newMeal, setNewMeal] = useState({
     date: new Date().toISOString().split('T')[0],
     mealType: '',
-    foods: [{ name: '', calories: '' }],
+    foods: [{ name: '', calories: '', protein: '', carbs: '', fats: '' }],
   });
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+
+    const fetchMeals = async () => {
+      try {
+        const response = await axiosInstance.get(`/api/meals/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setMeals(response.data);
+      } catch (error) {
+        console.error('Error fetching meals:', error);
+      }
+    };
+
+    fetchMeals();
+  }, []);
 
   const validateInputs = () => {
     const newErrors = {};
@@ -30,38 +51,71 @@ const MealPage = () => {
       if (food.calories <= 0) {
         newErrors[`calories_${index}`] = 'Calories must be a positive number.';
       }
+      if (food.protein < 0) {
+        newErrors[`protein_${index}`] =
+          'Protein must be a non-negative number.';
+      }
+      if (food.carbs < 0) {
+        newErrors[`carbs_${index}`] = 'Carbs must be a non-negative number.';
+      }
+      if (food.fats < 0) {
+        newErrors[`fats_${index}`] = 'Fats must be a non-negative number.';
+      }
     });
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleAddMeal = (e) => {
+  const handleAddMeal = async (e) => {
     e.preventDefault();
     if (validateInputs()) {
-      setMeals([...meals, { ...newMeal, id: Date.now() }]);
-      setNewMeal({
-        date: new Date().toISOString().split('T')[0],
-        mealType: '',
-        foods: [{ name: '', calories: '' }],
-      });
-      setErrors({});
+      try {
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId');
+        const response = await axiosInstance.post(
+          '/api/meals',
+          {
+            userId,
+            date: newMeal.date,
+            mealType: newMeal.mealType,
+            foods: newMeal.foods,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log('Meal added:', response.data);
+        setMeals([...meals, response.data]);
+        setNewMeal({
+          date: new Date().toISOString().split('T')[0],
+          mealType: '',
+          foods: [{ name: '', calories: '', protein: '', carbs: '', fats: '' }],
+        });
+        setErrors({});
+      } catch (error) {
+        console.error('Error adding meal:', error);
+      }
     }
   };
 
   const addFood = () => {
-    setNewMeal({
-      ...newMeal,
-      foods: [...newMeal.foods, { name: '', calories: '' }],
-    });
+    setNewMeal((prevState) => ({
+      ...prevState,
+      foods: [
+        ...prevState.foods,
+        { name: '', calories: '', protein: '', carbs: '', fats: '' },
+      ],
+    }));
   };
 
   const removeFood = (index) => {
-    const updatedFoods = newMeal.foods.filter((_, i) => i !== index);
-    setNewMeal({
-      ...newMeal,
-      foods: updatedFoods,
-    });
+    setNewMeal((prevState) => ({
+      ...prevState,
+      foods: prevState.foods.filter((_, i) => i !== index),
+    }));
   };
 
   const groupedMeals = meals.reduce((acc, meal) => {
@@ -98,7 +152,10 @@ const MealPage = () => {
                 type='date'
                 value={newMeal.date}
                 onChange={(e) =>
-                  setNewMeal({ ...newMeal, date: e.target.value })
+                  setNewMeal((prevState) => ({
+                    ...prevState,
+                    date: e.target.value,
+                  }))
                 }
                 error={errors.date}
               />
@@ -116,7 +173,10 @@ const MealPage = () => {
                         value={type}
                         checked={newMeal.mealType === type}
                         onChange={(e) =>
-                          setNewMeal({ ...newMeal, mealType: e.target.value })
+                          setNewMeal((prevState) => ({
+                            ...prevState,
+                            mealType: e.target.value,
+                          }))
                         }
                         className='mr-2'
                       />
@@ -157,10 +217,10 @@ const MealPage = () => {
                     onChange={(e) => {
                       const updatedFoods = [...newMeal.foods];
                       updatedFoods[index].name = e.target.value;
-                      setNewMeal({
-                        ...newMeal,
+                      setNewMeal((prevState) => ({
+                        ...prevState,
                         foods: updatedFoods,
-                      });
+                      }));
                     }}
                     error={errors[`name_${index}`]}
                   />
@@ -173,12 +233,60 @@ const MealPage = () => {
                     onChange={(e) => {
                       const updatedFoods = [...newMeal.foods];
                       updatedFoods[index].calories = e.target.value;
-                      setNewMeal({
-                        ...newMeal,
+                      setNewMeal((prevState) => ({
+                        ...prevState,
                         foods: updatedFoods,
-                      });
+                      }));
                     }}
                     error={errors[`calories_${index}`]}
+                  />
+
+                  <Input
+                    label='Protein (g)'
+                    icon={FaUtensils}
+                    type='number'
+                    value={food.protein}
+                    onChange={(e) => {
+                      const updatedFoods = [...newMeal.foods];
+                      updatedFoods[index].protein = e.target.value;
+                      setNewMeal((prevState) => ({
+                        ...prevState,
+                        foods: updatedFoods,
+                      }));
+                    }}
+                    error={errors[`protein_${index}`]}
+                  />
+
+                  <Input
+                    label='Carbs (g)'
+                    icon={FaUtensils}
+                    type='number'
+                    value={food.carbs}
+                    onChange={(e) => {
+                      const updatedFoods = [...newMeal.foods];
+                      updatedFoods[index].carbs = e.target.value;
+                      setNewMeal((prevState) => ({
+                        ...prevState,
+                        foods: updatedFoods,
+                      }));
+                    }}
+                    error={errors[`carbs_${index}`]}
+                  />
+
+                  <Input
+                    label='Fats (g)'
+                    icon={FaUtensils}
+                    type='number'
+                    value={food.fats}
+                    onChange={(e) => {
+                      const updatedFoods = [...newMeal.foods];
+                      updatedFoods[index].fats = e.target.value;
+                      setNewMeal((prevState) => ({
+                        ...prevState,
+                        foods: updatedFoods,
+                      }));
+                    }}
+                    error={errors[`fats_${index}`]}
                   />
                 </div>
               ))}
@@ -216,18 +324,18 @@ const MealPage = () => {
                   <div className='flex items-center mb-4'>
                     <FaCalendarAlt className='text-green-600 mr-2' />
                     <h3 className='text-lg font-semibold text-gray-900'>
-                      {date}
+                      {new Date(date).toLocaleDateString()}
                     </h3>
                   </div>
 
                   {Object.entries(mealTypes).map(([mealType, mealGroup]) => (
                     <div key={mealType} className='space-y-4'>
                       <p className='font-medium text-gray-900'>{mealType}</p>
-                      {mealGroup.map((meal) => (
-                        <div key={meal.id} className='space-y-4'>
-                          {meal.foods.map((food, index) => (
+                      {mealGroup.map((meal, index) => (
+                        <div key={index} className='space-y-4'>
+                          {meal.foods.map((food, foodIndex) => (
                             <div
-                              key={index}
+                              key={foodIndex}
                               className='p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors'
                             >
                               <div className='flex items-start'>
@@ -239,6 +347,15 @@ const MealPage = () => {
                                   <div className='mt-1 text-sm text-gray-600'>
                                     <span className='inline-flex items-center'>
                                       {food.calories} calories
+                                    </span>
+                                    <span className='inline-flex items-center ml-2'>
+                                      {food.protein}g protein
+                                    </span>
+                                    <span className='inline-flex items-center ml-2'>
+                                      {food.carbs}g carbs
+                                    </span>
+                                    <span className='inline-flex items-center ml-2'>
+                                      {food.fats}g fats
                                     </span>
                                   </div>
                                 </div>
