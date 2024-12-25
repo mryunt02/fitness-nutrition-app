@@ -53,7 +53,7 @@ const Dashboard = () => {
 
   const processMealData = () => {
     const dailyCalories = {};
-    userData.meals.forEach((meal) => {
+    userData?.meals.forEach((meal) => {
       if (selectedMealType === 'all' || meal.mealType === selectedMealType) {
         const calories = meal.foods.reduce(
           (sum, food) => sum + (food.calories || 0),

@@ -35,14 +35,6 @@ const Profile = () => {
     fetchUserData();
   }, [setUserData]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUserData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
   const handleSaveChanges = async () => {
     try {
       const token = localStorage.getItem('token');

@@ -14,7 +14,7 @@ const Signup = () => {
 
   useEffect(() => {
     if (localStorage.getItem('token')) {
-      navigate('/dashboard');
+      navigate('/profile');
     }
   }, [navigate]);
 
