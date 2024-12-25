@@ -1,4 +1,5 @@
 const userService = require('../services/userService');
+const { getAiSuggestion } = require('../aiAssistant');
 
 const createUser = async (req, res) => {
   try {
@@ -42,9 +43,21 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
+const getAiSuggestionForUser = async (req, res) => {
+  try {
+    const user = await userService.getUserById(req.params.id);
+    const suggestion = await getAiSuggestion(user);
+    res.status(200).send({ suggestion });
+  } catch (error) {
+    console.error('Error getting AI suggestion:', error);
+    res.status(500).send(error.message);
+  }
+};
+
 module.exports = {
   createUser,
   getUserById,
   authenticateUser,
   updateUserProfile,
+  getAiSuggestionForUser,
 };
