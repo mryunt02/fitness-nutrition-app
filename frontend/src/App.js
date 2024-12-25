@@ -1,5 +1,5 @@
 // filepath: /Users/bugrahanyunt/Developer/fitness-nutrition-app/frontend/src/App.js
-import React, { createContext, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Profile from './pages/Profile';
@@ -11,6 +11,7 @@ import ProgressPage from './pages/ProgressPage';
 import AiAssistant from './pages/AiAssistant';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import axiosInstance from './axiosInstance';
 export const AuthContext = createContext(null);
 const App = () => {
   const [userData, setUserData] = useState({
@@ -23,7 +24,31 @@ const App = () => {
     fitnessLevel: 'intermediate',
     healthCondition: 'None',
     goal: 'Weight Loss',
+    meals: [],
+    workouts: [],
   });
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
+
+      if (token && userId) {
+        try {
+          const response = await axiosInstance.get(`/api/users/${userId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setUserData({ ...response.data, isLoggedIn: true });
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, []);
   return (
     <AuthContext.Provider value={{ userData, setUserData }}>
       <Router>

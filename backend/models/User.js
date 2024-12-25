@@ -12,6 +12,8 @@ const userSchema = new mongoose.Schema({
   goal: String,
   email: { type: String, unique: true },
   password: String,
+  meals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Meal' }],
+  workouts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Workout' }],
 });
 
 userSchema.pre('save', async function (next) {

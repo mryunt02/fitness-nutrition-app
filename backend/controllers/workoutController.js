@@ -1,22 +1,28 @@
-const workoutService = require('../services/workoutService');
+const Workout = require('../models/Workout');
+const User = require('../models/User');
 
 const createWorkout = async (req, res) => {
   try {
-    const workout = await workoutService.createWorkout(req.body);
-    res.status(201).send(workout);
+    const workout = new Workout(req.body);
+    await workout.save();
+
+    // Add workout reference to user
+    await User.findByIdAndUpdate(workout.userId, {
+      $push: { workouts: workout._id },
+    });
+
+    res.status(201).json(workout);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
 const getWorkoutsByUserId = async (req, res) => {
   try {
-    const workouts = await workoutService.getWorkoutsByUserId(
-      req.params.userId
-    );
-    res.status(200).send(workouts);
+    const workouts = await Workout.find({ userId: req.params.userId });
+    res.json(workouts);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 

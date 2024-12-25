@@ -16,7 +16,7 @@ const getUserById = async (req, res) => {
     res.status(200).send(user);
   } catch (error) {
     console.error('Error fetching user by ID:', error);
-    res.status(500).send(error);
+    res.status(500).send(error.message);
   }
 };
 
@@ -38,7 +38,7 @@ const updateUserProfile = async (req, res) => {
     res.status(200).send(user);
   } catch (error) {
     console.error('Error updating user profile:', error);
-    res.status(500).send(error);
+    res.status(500).send(error.message);
   }
 };
 

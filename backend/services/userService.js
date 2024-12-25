@@ -17,7 +17,17 @@ const createUser = async (userData) => {
 };
 
 const getUserById = async (userId) => {
-  return await User.findById(userId);
+  try {
+    const user = await User.findById(userId)
+      .populate('meals')
+      .populate('workouts');
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user;
+  } catch (error) {
+    throw new Error('Error fetching user data');
+  }
 };
 
 const authenticateUser = async (email, password) => {

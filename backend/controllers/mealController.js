@@ -1,20 +1,26 @@
-const mealService = require('../services/mealService');
+const Meal = require('../models/Meal');
+const User = require('../models/User');
 
 const createMeal = async (req, res) => {
   try {
-    const meal = await mealService.createMeal(req.body);
-    res.status(201).send(meal);
+    const meal = new Meal(req.body);
+    await meal.save();
+
+    // Add meal reference to user
+    await User.findByIdAndUpdate(meal.userId, { $push: { meals: meal._id } });
+
+    res.status(201).json(meal);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
 const getMealsByUserId = async (req, res) => {
   try {
-    const meals = await mealService.getMealsByUserId(req.params.userId);
-    res.status(200).send(meals);
+    const meals = await Meal.find({ userId: req.params.userId });
+    res.json(meals);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
