@@ -10,7 +10,16 @@ const workoutRoutes = require('./routes/workoutRoutes');
 const mealRoutes = require('./routes/mealRoutes');
 
 const app = express();
-app.use(cors());
+
+// Configure CORS to allow requests from both the deployed app and local development
+app.use(
+  cors({
+    origin: ['https://fitness-nutrition-app-1.onrender.com'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type,Authorization',
+  })
+);
+
 app.use(bodyParser.json());
 
 // MongoDB connection using environment variable

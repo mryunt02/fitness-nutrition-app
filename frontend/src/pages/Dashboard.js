@@ -35,7 +35,7 @@ const Dashboard = () => {
 
   const processNutritionData = () => {
     const totals = { protein: 0, carbs: 0, fats: 0 };
-    userData.meals.forEach((meal) => {
+    userData?.meals?.forEach((meal) => {
       if (selectedMealType === 'all' || meal.mealType === selectedMealType) {
         meal.foods.forEach((food) => {
           totals.protein += food.protein || 0;
@@ -53,7 +53,7 @@ const Dashboard = () => {
 
   const processMealData = () => {
     const dailyCalories = {};
-    userData?.meals.forEach((meal) => {
+    userData?.meals?.forEach((meal) => {
       if (selectedMealType === 'all' || meal.mealType === selectedMealType) {
         const calories = meal.foods.reduce(
           (sum, food) => sum + (food.calories || 0),
@@ -77,7 +77,7 @@ const Dashboard = () => {
 
   const processWorkoutData = () => {
     const workoutsByDate = {};
-    userData.workouts.forEach((workout) => {
+    userData.workouts?.forEach((workout) => {
       const date = workout.date;
       if (!workoutsByDate[date]) {
         workoutsByDate[date] = {
@@ -88,7 +88,7 @@ const Dashboard = () => {
         };
       }
 
-      workout.exercises.forEach((exercise) => {
+      workout?.exercises.forEach((exercise) => {
         workoutsByDate[date].exercises.add(exercise.name);
         workoutsByDate[date].totalSets += exercise.sets || 0;
         workoutsByDate[date].totalReps += exercise.reps || 0;
@@ -121,8 +121,8 @@ const Dashboard = () => {
       totalDuration: 0,
     };
 
-    userData.workouts.forEach((workout) => {
-      workout.exercises.forEach((exercise) => {
+    userData.workouts?.forEach((workout) => {
+      workout?.exercises.forEach((exercise) => {
         stats.uniqueExercises.add(exercise.name);
         stats.totalSets += exercise.sets || 0;
         stats.totalReps += exercise.reps || 0;

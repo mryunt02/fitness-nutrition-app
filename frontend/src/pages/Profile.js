@@ -35,6 +35,14 @@ const Profile = () => {
     fetchUserData();
   }, [setUserData]);
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUserData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
   const handleSaveChanges = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -112,7 +120,87 @@ const Profile = () => {
             >
               <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 {/* Form Fields */}
-                {/* ... existing form fields ... */}
+                <div>
+                  <label className='block text-sm font-medium text-gray-700'>
+                    Name
+                  </label>
+                  <input
+                    type='text'
+                    name='name'
+                    value={userData.name}
+                    onChange={handleChange}
+                    className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2'
+                    required
+                  />
+                </div>
+                <div>
+                  <label className='block text-sm font-medium text-gray-700'>
+                    Age
+                  </label>
+                  <input
+                    type='number'
+                    name='age'
+                    value={userData.age}
+                    onChange={handleChange}
+                    className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2'
+                    required
+                  />
+                </div>
+                <div>
+                  <label className='block text-sm font-medium text-gray-700'>
+                    Weight (kg)
+                  </label>
+                  <input
+                    type='number'
+                    name='weight'
+                    value={userData.weight}
+                    onChange={handleChange}
+                    className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2'
+                    required
+                  />
+                </div>
+                <div>
+                  <label className='block text-sm font-medium text-gray-700'>
+                    Height (cm)
+                  </label>
+                  <input
+                    type='number'
+                    name='height'
+                    value={userData.height}
+                    onChange={handleChange}
+                    className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2'
+                    required
+                  />
+                </div>
+                <div>
+                  <label className='block text-sm font-medium text-gray-700'>
+                    Gender
+                  </label>
+                  <select
+                    name='gender'
+                    value={userData.gender}
+                    onChange={handleChange}
+                    className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2'
+                    required
+                  >
+                    <option value='male'>Male</option>
+                    <option value='female'>Female</option>
+                    <option value='other'>Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className='block text-sm font-medium text-gray-700'>
+                    Goal
+                  </label>
+                  <input
+                    type='text'
+                    name='goal'
+                    value={userData.goal}
+                    onChange={handleChange}
+                    className='mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2'
+                    required
+                  />
+                </div>
               </div>
               <div className='flex justify-end mt-6'>
                 <button
