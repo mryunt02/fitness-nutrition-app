@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { FaCalendarAlt, FaUtensils, FaPlus, FaTrash } from 'react-icons/fa';
 import { Input } from '../components/Input';
 import axiosInstance from '../axiosInstance';
+import { AuthContext } from '../App';
 
 const MealPage = () => {
-  const [meals, setMeals] = useState([]);
+  const { userData, setUserData } = useContext(AuthContext);
+  const [meals, setMeals] = useState(userData.meals || []);
   const [newMeal, setNewMeal] = useState({
     date: new Date().toISOString().split('T')[0],
     mealType: '',
@@ -95,6 +97,10 @@ const MealPage = () => {
           foods: [{ name: '', calories: '', protein: '', carbs: '', fats: '' }],
         });
         setErrors({});
+        setUserData((prevData) => ({
+          ...prevData,
+          meals: [...(prevData.meals || []), response.data],
+        }));
       } catch (error) {
         console.error('Error adding meal:', error);
       }

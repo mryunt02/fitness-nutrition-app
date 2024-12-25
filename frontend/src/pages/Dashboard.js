@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -14,9 +14,12 @@ import {
   BarChart,
   Bar,
 } from 'recharts';
+import { AuthContext } from '../App';
 
 const Dashboard = () => {
   const [timeFrame, setTimeFrame] = useState('weekly');
+  const { userData } = useContext(AuthContext);
+  console.log(userData);
 
   // Sample data remains the same as in original code
   const mealData = {

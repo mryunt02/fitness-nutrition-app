@@ -1,5 +1,4 @@
-// filepath: /Users/bugrahanyunt/Developer/fitness-nutrition-app/frontend/src/App.js
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Profile from './pages/Profile';
@@ -12,7 +11,9 @@ import AiAssistant from './pages/AiAssistant';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import axiosInstance from './axiosInstance';
+
 export const AuthContext = createContext(null);
+
 const App = () => {
   const [userData, setUserData] = useState({
     isLoggedIn: false,
@@ -49,6 +50,7 @@ const App = () => {
 
     fetchUserData();
   }, []);
+
   return (
     <AuthContext.Provider value={{ userData, setUserData }}>
       <Router>

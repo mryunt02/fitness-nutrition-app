@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { FaChartLine, FaUtensils, FaDumbbell, FaFire } from 'react-icons/fa';
 import {
   LineChart,
@@ -12,6 +12,7 @@ import {
   AreaChart,
   Area,
 } from 'recharts';
+import { AuthContext } from '../App';
 
 const ProgressPage = ({ workouts = [], meals = [] }) => {
   const totalWorkouts = workouts.length;
@@ -27,6 +28,8 @@ const ProgressPage = ({ workouts = [], meals = [] }) => {
     { name: 'Week 3', calories: 1300, target: 1400 },
     { name: 'Week 4', calories: 1600, target: 1400 },
   ];
+  const { userData } = useContext(AuthContext);
+  console.log('userData', userData);
 
   const StatCard = ({ icon: Icon, title, value, subtitle, color }) => (
     <div className='bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow'>

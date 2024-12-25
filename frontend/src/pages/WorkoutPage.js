@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import axiosInstance from '../axiosInstance';
+import { AuthContext } from '../App';
+import { Input } from '../components/Input';
 import {
   FaCalendarAlt,
-  FaDumbbell,
   FaClock,
+  FaDumbbell,
   FaListOl,
   FaTh,
-  FaPlus,
-  FaTrash,
 } from 'react-icons/fa';
-import { Input } from '../components/Input';
-import axiosInstance from '../axiosInstance';
 
 const WorkoutPage = () => {
-  const [workouts, setWorkouts] = useState([]);
+  const { userData, setUserData } = useContext(AuthContext);
+  const [workouts, setWorkouts] = useState(userData.workouts || []);
   const [newWorkout, setNewWorkout] = useState({
     date: new Date().toISOString().split('T')[0],
     exercises: [{ name: '', reps: '', sets: '', duration: '' }],
@@ -31,13 +31,17 @@ const WorkoutPage = () => {
           },
         });
         setWorkouts(response.data);
+        setUserData((prevData) => ({
+          ...prevData,
+          workouts: response.data,
+        }));
       } catch (error) {
         console.error('Error fetching workouts:', error);
       }
     };
 
     fetchWorkouts();
-  }, []);
+  }, [setUserData]);
 
   const validateInputs = () => {
     const newErrors = {};
@@ -57,8 +61,9 @@ const WorkoutPage = () => {
       if (exercise.sets <= 0) {
         newErrors[`sets_${index}`] = 'Sets must be a positive number.';
       }
-      if (exercise.duration <= 0) {
-        newErrors[`duration_${index}`] = 'Duration must be a positive number.';
+      if (exercise.duration < 0) {
+        newErrors[`duration_${index}`] =
+          'Duration must be a non-negative number.';
       }
     });
 
@@ -75,8 +80,9 @@ const WorkoutPage = () => {
         const response = await axiosInstance.post(
           '/api/workouts',
           {
-            ...newWorkout,
             userId,
+            date: newWorkout.date,
+            exercises: newWorkout.exercises,
           },
           {
             headers: {
@@ -84,12 +90,17 @@ const WorkoutPage = () => {
             },
           }
         );
+        console.log('Workout added:', response.data);
         setWorkouts([...workouts, response.data]);
         setNewWorkout({
           date: new Date().toISOString().split('T')[0],
           exercises: [{ name: '', reps: '', sets: '', duration: '' }],
         });
         setErrors({});
+        setUserData((prevData) => ({
+          ...prevData,
+          workouts: [...(prevData.workouts || []), response.data],
+        }));
       } catch (error) {
         console.error('Error adding workout:', error);
       }
@@ -113,14 +124,6 @@ const WorkoutPage = () => {
     }));
   };
 
-  const groupedWorkouts = workouts.reduce((acc, workout) => {
-    if (!acc[workout.date]) {
-      acc[workout.date] = [];
-    }
-    acc[workout.date].push(workout);
-    return acc;
-  }, {});
-
   return (
     <div className='min-h-screen bg-gray-50 py-8'>
       <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8'>
@@ -129,9 +132,7 @@ const WorkoutPage = () => {
             <h1 className='text-4xl font-bold text-gray-900'>
               Workout Tracker
             </h1>
-            <p className='mt-2 text-gray-600'>
-              Log and track your exercise routine
-            </p>
+            <p className='mt-2 text-gray-600'>Log and track your workouts</p>
           </div>
         </div>
 
@@ -155,7 +156,6 @@ const WorkoutPage = () => {
                 }
                 error={errors.date}
               />
-
               {newWorkout.exercises.map((exercise, index) => (
                 <div
                   key={index}
@@ -171,7 +171,7 @@ const WorkoutPage = () => {
                         onClick={() => removeExercise(index)}
                         className='text-red-500 hover:text-red-600 transition-colors'
                       >
-                        <FaTrash />
+                        Remove
                       </button>
                     )}
                   </div>
@@ -192,55 +192,53 @@ const WorkoutPage = () => {
                     error={errors[`name_${index}`]}
                   />
 
-                  <div className='grid grid-cols-3 gap-4'>
-                    <Input
-                      label='Reps'
-                      icon={FaListOl}
-                      type='number'
-                      value={exercise.reps}
-                      onChange={(e) => {
-                        const updatedExercises = [...newWorkout.exercises];
-                        updatedExercises[index].reps = e.target.value;
-                        setNewWorkout((prevState) => ({
-                          ...prevState,
-                          exercises: updatedExercises,
-                        }));
-                      }}
-                      error={errors[`reps_${index}`]}
-                    />
+                  <Input
+                    label='Reps'
+                    icon={FaListOl}
+                    type='number'
+                    value={exercise.reps}
+                    onChange={(e) => {
+                      const updatedExercises = [...newWorkout.exercises];
+                      updatedExercises[index].reps = e.target.value;
+                      setNewWorkout((prevState) => ({
+                        ...prevState,
+                        exercises: updatedExercises,
+                      }));
+                    }}
+                    error={errors[`reps_${index}`]}
+                  />
 
-                    <Input
-                      label='Sets'
-                      icon={FaTh}
-                      type='number'
-                      value={exercise.sets}
-                      onChange={(e) => {
-                        const updatedExercises = [...newWorkout.exercises];
-                        updatedExercises[index].sets = e.target.value;
-                        setNewWorkout((prevState) => ({
-                          ...prevState,
-                          exercises: updatedExercises,
-                        }));
-                      }}
-                      error={errors[`sets_${index}`]}
-                    />
+                  <Input
+                    label='Sets'
+                    icon={FaTh}
+                    type='number'
+                    value={exercise.sets}
+                    onChange={(e) => {
+                      const updatedExercises = [...newWorkout.exercises];
+                      updatedExercises[index].sets = e.target.value;
+                      setNewWorkout((prevState) => ({
+                        ...prevState,
+                        exercises: updatedExercises,
+                      }));
+                    }}
+                    error={errors[`sets_${index}`]}
+                  />
 
-                    <Input
-                      label='Duration'
-                      icon={FaClock}
-                      type='number'
-                      value={exercise.duration}
-                      onChange={(e) => {
-                        const updatedExercises = [...newWorkout.exercises];
-                        updatedExercises[index].duration = e.target.value;
-                        setNewWorkout((prevState) => ({
-                          ...prevState,
-                          exercises: updatedExercises,
-                        }));
-                      }}
-                      error={errors[`duration_${index}`]}
-                    />
-                  </div>
+                  <Input
+                    label='Duration (minutes)'
+                    icon={FaClock}
+                    type='number'
+                    value={exercise.duration}
+                    onChange={(e) => {
+                      const updatedExercises = [...newWorkout.exercises];
+                      updatedExercises[index].duration = e.target.value;
+                      setNewWorkout((prevState) => ({
+                        ...prevState,
+                        exercises: updatedExercises,
+                      }));
+                    }}
+                    error={errors[`duration_${index}`]}
+                  />
                 </div>
               ))}
 
@@ -250,7 +248,6 @@ const WorkoutPage = () => {
                   onClick={addExercise}
                   className='flex items-center justify-center px-4 py-2 border border-green-500 text-green-500 rounded-lg hover:bg-green-50 transition-colors'
                 >
-                  <FaPlus className='mr-2' />
                   Add Exercise
                 </button>
                 <button
@@ -269,48 +266,29 @@ const WorkoutPage = () => {
               Workout History
             </h2>
             <div className='space-y-6'>
-              {Object.entries(groupedWorkouts).map(([date, workoutGroup]) => (
+              {workouts.map((workout) => (
                 <div
-                  key={date}
+                  key={workout._id}
                   className='bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow'
                 >
                   <div className='flex items-center mb-4'>
-                    <FaCalendarAlt className='text-green-600 mr-2' />
                     <h3 className='text-lg font-semibold text-gray-900'>
-                      {date}
+                      {new Date(workout.date).toLocaleDateString()}
                     </h3>
                   </div>
-
-                  {workoutGroup.map((workout) => (
-                    <div key={workout.id} className='space-y-4'>
-                      {workout.exercises.map((exercise, index) => (
-                        <div
-                          key={index}
-                          className='p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors'
-                        >
-                          <div className='flex items-start'>
-                            <FaDumbbell className='text-green-600 mt-1 mr-3' />
-                            <div>
-                              <p className='font-medium text-gray-900'>
-                                {exercise.name}
-                              </p>
-                              <div className='mt-1 text-sm text-gray-600'>
-                                <span className='inline-flex items-center mr-4'>
-                                  <FaListOl className='mr-1' /> {exercise.reps}{' '}
-                                  reps
-                                </span>
-                                <span className='inline-flex items-center mr-4'>
-                                  <FaTh className='mr-1' /> {exercise.sets} sets
-                                </span>
-                                <span className='inline-flex items-center'>
-                                  <FaClock className='mr-1' />{' '}
-                                  {exercise.duration} min
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                  {workout.exercises.map((exercise, index) => (
+                    <div key={index} className='mb-4'>
+                      <p className='font-medium text-gray-900'>
+                        {exercise.name}
+                      </p>
+                      <p className='text-gray-600'>
+                        {exercise.reps} reps x {exercise.sets} sets
+                      </p>
+                      {exercise.duration && (
+                        <p className='text-gray-600'>
+                          Duration: {exercise.duration} minutes
+                        </p>
+                      )}
                     </div>
                   ))}
                 </div>
