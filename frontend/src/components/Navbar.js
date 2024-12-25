@@ -85,9 +85,7 @@ const Navbar = () => {
                 />
               </>
             ) : (
-              <>
-                <NavLink to='/login' icon={<LogIn size={20} />} label='Login' />
-              </>
+              <NavLink to='/login' icon={<LogIn size={20} />} label='Login' />
             )}
           </div>
         </div>
@@ -106,42 +104,54 @@ const Navbar = () => {
               <X size={24} />
             </button>
             <div className='flex flex-col space-y-4'>
-              <NavLink
-                to='/dashboard'
-                icon={<House size={20} />}
-                label='Dashboard'
-                className='text-xl'
-              />
-              <NavLink
-                to='/profile'
-                icon={<User size={20} />}
-                label='Profile'
-                className='text-xl'
-              />
-              <NavLink
-                to='/workouts'
-                icon={<Dumbbell size={20} />}
-                label='Workouts'
-                className='text-xl'
-              />
-              <NavLink
-                to='/meals'
-                icon={<Beef size={20} />}
-                label='Meals'
-                className='text-xl'
-              />
-              <NavLink
-                to='/progress'
-                icon={<Loader size={20} />}
-                label='Progress'
-                className='text-xl'
-              />
-              <NavLink
-                to='/ai-assistant'
-                icon={<Brain size={20} />}
-                label='AI Assistant'
-                className='text-lg'
-              />
+              {userData.isLoggedIn ? (
+                <>
+                  <NavLink
+                    to='/dashboard'
+                    icon={<House size={20} />}
+                    label='Dashboard'
+                    className='text-xl'
+                  />
+                  <NavLink
+                    to='/profile'
+                    icon={<User size={20} />}
+                    label='Profile'
+                    className='text-xl'
+                  />
+                  <NavLink
+                    to='/workouts'
+                    icon={<Dumbbell size={20} />}
+                    label='Workouts'
+                    className='text-xl'
+                  />
+                  <NavLink
+                    to='/meals'
+                    icon={<Beef size={20} />}
+                    label='Meals'
+                    className='text-xl'
+                  />
+                  <NavLink
+                    to='/progress'
+                    icon={<Loader size={20} />}
+                    label='Progress'
+                    className='text-xl'
+                  />
+                  <NavLink
+                    to='/ai-assistant'
+                    icon={<Brain size={20} />}
+                    label='AI Assistant'
+                    className='text-lg'
+                  />
+                  <NavLink
+                    to='/login'
+                    icon={<LogOut size={20} />}
+                    label='Logout'
+                    onClick={handleLogout}
+                  />
+                </>
+              ) : (
+                <NavLink to='/login' icon={<LogIn size={20} />} label='Login' />
+              )}
             </div>
           </div>
         </div>
