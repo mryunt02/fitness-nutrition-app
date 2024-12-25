@@ -1,8 +1,5 @@
 import React, { useContext } from 'react';
-import { FaChartLine, FaUtensils, FaDumbbell, FaFire } from 'react-icons/fa';
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -13,23 +10,50 @@ import {
   Area,
 } from 'recharts';
 import { AuthContext } from '../App';
+import { FaAppleAlt, FaBurn, FaDumbbell } from 'react-icons/fa';
 
-const ProgressPage = ({ workouts = [], meals = [] }) => {
+const ProgressPage = () => {
+  const { userData } = useContext(AuthContext);
+  const { workouts, meals } = userData;
+
   const totalWorkouts = workouts.length;
   const totalMeals = meals.length;
   const totalCalories = meals.reduce(
-    (acc, meal) => acc + (parseFloat(meal.calories) || 0),
+    (acc, meal) =>
+      acc +
+      meal.foods.reduce(
+        (sum, food) => sum + (parseFloat(food.calories) || 0),
+        0
+      ),
     0
   );
 
-  const calorieData = [
-    { name: 'Week 1', calories: 1200, target: 1400 },
-    { name: 'Week 2', calories: 1500, target: 1400 },
-    { name: 'Week 3', calories: 1300, target: 1400 },
-    { name: 'Week 4', calories: 1600, target: 1400 },
-  ];
-  const { userData } = useContext(AuthContext);
-  console.log('userData', userData);
+  // Group meals by day
+  const mealsByDay = meals.reduce((acc, meal) => {
+    const date = meal.date;
+    if (!acc[date]) {
+      acc[date] = { date, calories: 0 };
+    }
+    acc[date].calories += meal.foods.reduce(
+      (sum, food) => sum + (parseFloat(food.calories) || 0),
+      0
+    );
+    return acc;
+  }, {});
+
+  const calorieData = Object.values(mealsByDay);
+
+  // Group workouts by day
+  const workoutsByDay = workouts.reduce((acc, workout) => {
+    const date = workout.date;
+    if (!acc[date]) {
+      acc[date] = { date, exercises: 0 };
+    }
+    acc[date].exercises += workout.exercises.length;
+    return acc;
+  }, {});
+
+  const workoutData = Object.values(workoutsByDay);
 
   const StatCard = ({ icon: Icon, title, value, subtitle, color }) => (
     <div className='bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow'>
@@ -39,13 +63,11 @@ const ProgressPage = ({ workouts = [], meals = [] }) => {
           <div className='flex items-baseline'>
             <span className='text-3xl font-bold text-gray-900'>{value}</span>
             {subtitle && (
-              <span className='ml-2 text-sm text-gray-500'>{subtitle}</span>
+              <span className='text-sm text-gray-500 ml-2'>{subtitle}</span>
             )}
           </div>
         </div>
-        <div className={`p-3 rounded-lg ${color}`}>
-          <Icon className='w-6 h-6 text-white' />
-        </div>
+        <Icon className={`text-${color}-500 w-10 h-10`} />
       </div>
     </div>
   );
@@ -53,123 +75,72 @@ const ProgressPage = ({ workouts = [], meals = [] }) => {
   return (
     <div className='min-h-screen bg-gray-50 py-8'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-        <div className='mb-8'>
-          <h1 className='text-4xl font-bold text-gray-900'>Progress Tracker</h1>
-          <p className='mt-2 text-gray-600'>Monitor your fitness journey</p>
+        <div className='text-center mb-8'>
+          <h1 className='text-4xl font-bold text-gray-900 mb-2'>Progress</h1>
+          <p className='text-gray-600'>Track your fitness progress</p>
         </div>
 
-        {/* Stats Grid */}
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8'>
           <StatCard
             icon={FaDumbbell}
             title='Total Workouts'
-            value={totalWorkouts}
-            subtitle='sessions'
-            color='bg-blue-500'
+            value={workoutData.length}
+            color='blue'
           />
           <StatCard
-            icon={FaUtensils}
+            icon={FaAppleAlt}
             title='Total Meals'
             value={totalMeals}
-            subtitle='logged'
-            color='bg-green-500'
+            color='green'
           />
           <StatCard
-            icon={FaFire}
+            icon={FaBurn}
             title='Total Calories'
-            value={totalCalories.toLocaleString()}
-            subtitle='kcal'
-            color='bg-orange-500'
-          />
-          <StatCard
-            icon={FaChartLine}
-            title='Daily Average'
-            value={(totalCalories / (meals.length || 1)).toFixed(0)}
-            subtitle='kcal/day'
-            color='bg-purple-500'
+            value={totalCalories}
+            color='red'
           />
         </div>
 
-        {/* Charts Section */}
-        <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
-          {/* Caloric Intake Chart */}
-          <div className='bg-white p-6 rounded-xl shadow-lg'>
-            <h2 className='text-xl font-semibold text-gray-900 mb-6'>
-              Caloric Intake Over Time
-            </h2>
-            <ResponsiveContainer width='100%' height={300}>
-              <AreaChart data={calorieData}>
-                <defs>
-                  <linearGradient
-                    id='colorCalories'
-                    x1='0'
-                    y1='0'
-                    x2='0'
-                    y2='1'
-                  >
-                    <stop offset='5%' stopColor='#10B981' stopOpacity={0.1} />
-                    <stop offset='95%' stopColor='#10B981' stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray='3 3' stroke='#f0f0f0' />
-                <XAxis dataKey='name' stroke='#6B7280' />
-                <YAxis stroke='#6B7280' />
-                <Tooltip
-                  contentStyle={{
-                    background: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
-                  }}
-                />
-                <Legend />
-                <Area
-                  type='monotone'
-                  dataKey='calories'
-                  stroke='#10B981'
-                  fill='url(#colorCalories)'
-                  strokeWidth={2}
-                />
-                <Line
-                  type='monotone'
-                  dataKey='target'
-                  stroke='#6B7280'
-                  strokeDasharray='5 5'
-                  strokeWidth={2}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
+        <div className='bg-white rounded-xl shadow-lg p-6 mb-8'>
+          <h2 className='text-xl font-semibold text-gray-800 mb-6'>
+            Caloric Intake
+          </h2>
+          <ResponsiveContainer width='100%' height={400}>
+            <AreaChart data={calorieData}>
+              <CartesianGrid strokeDasharray='3 3' />
+              <XAxis dataKey='date' />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Area
+                type='monotone'
+                dataKey='calories'
+                stroke='#FF6347'
+                fill='#FF6347'
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
 
-          {/* Weekly Progress Chart */}
-          <div className='bg-white p-6 rounded-xl shadow-lg'>
-            <h2 className='text-xl font-semibold text-gray-900 mb-6'>
-              Workout Frequency
-            </h2>
-            <ResponsiveContainer width='100%' height={300}>
-              <LineChart data={calorieData}>
-                <CartesianGrid strokeDasharray='3 3' stroke='#f0f0f0' />
-                <XAxis dataKey='name' stroke='#6B7280' />
-                <YAxis stroke='#6B7280' />
-                <Tooltip
-                  contentStyle={{
-                    background: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
-                  }}
-                />
-                <Legend />
-                <Line
-                  type='monotone'
-                  dataKey='calories'
-                  stroke='#6366F1'
-                  strokeWidth={2}
-                  dot={{ strokeWidth: 2 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+        <div className='bg-white rounded-xl shadow-lg p-6 mb-8'>
+          <h2 className='text-xl font-semibold text-gray-800 mb-6'>
+            Workout History
+          </h2>
+          <ResponsiveContainer width='100%' height={400}>
+            <AreaChart data={workoutData}>
+              <CartesianGrid strokeDasharray='3 3' />
+              <XAxis dataKey='date' />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Area
+                type='monotone'
+                dataKey='exercises'
+                stroke='#1E90FF'
+                fill='#1E90FF'
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>
