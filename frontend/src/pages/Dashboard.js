@@ -113,21 +113,36 @@ const Dashboard = () => {
   };
 
   const getExerciseStats = () => {
+    // Initialize stats with default values
     const stats = {
-      totalWorkouts: userData.workouts.length,
+      totalWorkouts: 0,
       uniqueExercises: new Set(),
       totalSets: 0,
       totalReps: 0,
       totalDuration: 0,
     };
 
-    userData.workouts?.forEach((workout) => {
-      workout?.exercises.forEach((exercise) => {
-        stats.uniqueExercises.add(exercise.name);
-        stats.totalSets += exercise.sets || 0;
-        stats.totalReps += exercise.reps || 0;
-        stats.totalDuration += exercise.duration || 0;
-      });
+    // Check if workouts exist, if not return default stats
+    if (!userData?.workouts) {
+      return {
+        ...stats,
+        uniqueExercises: 0,
+      };
+    }
+
+    stats.totalWorkouts = userData.workouts.length;
+
+    userData.workouts.forEach((workout) => {
+      if (workout?.exercises) {
+        workout.exercises.forEach((exercise) => {
+          if (exercise?.name) {
+            stats.uniqueExercises.add(exercise.name);
+          }
+          stats.totalSets += exercise?.sets || 0;
+          stats.totalReps += exercise?.reps || 0;
+          stats.totalDuration += exercise?.duration || 0;
+        });
+      }
     });
 
     return {
