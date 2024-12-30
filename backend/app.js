@@ -14,7 +14,11 @@ const app = express();
 // Configure CORS to allow requests from both the deployed app and local development
 app.use(
   cors({
-    origin: ['https://fitness-nutrition-app-1.onrender.com'],
+    origin: [
+      'https://fitness-nutrition-app-1.onrender.com',
+      'http://localhost:3000',
+      'https://fitness-nutrition-app.vercel.app',
+    ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type,Authorization',
   })
