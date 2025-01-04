@@ -33,7 +33,6 @@ const App = () => {
     const fetchUserData = async () => {
       const token = localStorage.getItem('token');
       const userId = localStorage.getItem('userId');
-      console.log(userId);
 
       if (token && userId) {
         try {

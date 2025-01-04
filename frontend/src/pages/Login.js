@@ -1,7 +1,6 @@
-// filepath: /Users/bugrahanyunt/Developer/fitness-nutrition-app/frontend/src/pages/Login.js
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaUser, FaLock } from 'react-icons/fa';
+import { FaUser, FaLock, FaSpinner } from 'react-icons/fa';
 import axiosInstance from '../axiosInstance';
 import { AuthContext } from '../App';
 
@@ -9,6 +8,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { setUserData } = useContext(AuthContext);
 
@@ -20,6 +20,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const response = await axiosInstance.post('/api/users/login', {
         email,
@@ -31,6 +32,8 @@ const Login = () => {
       navigate('/dashboard');
     } catch (err) {
       setError('Invalid email or password');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -74,9 +77,17 @@ const Login = () => {
           </div>
           <button
             type='submit'
-            className='w-full bg-green-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-green-700 transition duration-200'
+            disabled={isLoading}
+            className='w-full bg-green-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-green-700 transition duration-200 disabled:bg-green-400 disabled:cursor-not-allowed flex items-center justify-center'
           >
-            Login
+            {isLoading ? (
+              <>
+                <FaSpinner className='animate-spin mr-2' />
+                Loading...
+              </>
+            ) : (
+              'Login'
+            )}
           </button>
         </form>
         <p className='mt-4 text-center text-sm text-gray-600'>

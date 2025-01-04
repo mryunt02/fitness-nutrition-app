@@ -21,6 +21,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userId');
     setUserData((prevData) => ({
       ...prevData,
       isLoggedIn: false,
