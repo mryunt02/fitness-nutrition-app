@@ -1,7 +1,9 @@
 import React from 'react';
 import { features } from '../Feature';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
+  const navigate = useNavigate();
   return (
     <div className='min-h-screen bg-gradient-to-b from-white to-green-50'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
@@ -16,7 +18,10 @@ const Home = () => {
               progress with precision and ease.
             </p>
             <div className='space-x-4'>
-              <button className='inline-flex items-center px-8 py-3 rounded-full text-lg font-semibold bg-green-600 text-white hover:bg-green-700 transform hover:scale-105 transition-all shadow-lg hover:shadow-xl'>
+              <button
+                onClick={() => navigate('/login')}
+                className='inline-flex items-center px-8 py-3 rounded-full text-lg font-semibold bg-green-600 text-white hover:bg-green-700 transform hover:scale-105 transition-all shadow-lg hover:shadow-xl'
+              >
                 Get Started
               </button>
               <button className='inline-flex items-center px-8 py-3 rounded-full text-lg font-semibold text-green-600 bg-white border-2 border-green-600 hover:bg-green-50 transform hover:scale-105 transition-all'>
