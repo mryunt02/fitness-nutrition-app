@@ -28,6 +28,7 @@ const Signup = () => {
       });
       setUserData({ name: response.data.name });
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('userId', response.data._id);
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Error creating account');

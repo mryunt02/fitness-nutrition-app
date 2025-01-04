@@ -108,7 +108,7 @@ const Dashboard = () => {
   };
 
   const getMealTypes = () => {
-    const types = new Set(userData.meals.map((meal) => meal.mealType));
+    const types = new Set(userData?.meals?.map((meal) => meal.mealType));
     return ['all', ...Array.from(types)];
   };
 
@@ -282,7 +282,7 @@ const Dashboard = () => {
                   innerRadius={60}
                   label
                 >
-                  {nutritionData.map((entry, index) => (
+                  {nutritionData?.map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={chartColors.nutrition[index % 3]}
